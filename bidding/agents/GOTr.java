@@ -45,6 +45,7 @@ public class GOTr implements BoardObject {
         }
 
     }
+
     public void moveUp() {
         if(position.getY()<board.height){
             position.setY(position.getY()+1);

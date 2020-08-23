@@ -22,7 +22,7 @@ public class Factory {
         for(Integer i=0; i<gomNumber; i++){
             gomPositions[i] = new Position();
             //jak dodać board do agenta
-            AgentController ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i});
+            AgentController ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i,board});
             ac.start();
         }
     }
