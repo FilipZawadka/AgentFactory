@@ -1,15 +1,15 @@
-package utils;
+package biddingOntology;
 
 import jade.content.Concept;
 
-public class Position{
+public class PositionInfo implements Concept {
     private Integer x,y;
 
-    public Position(){
+    public PositionInfo(){
 
     }
 
-    public Position(Integer x, Integer y){
+    public PositionInfo(Integer x, Integer y){
         this.x = x;
         this.y = y;
     }
