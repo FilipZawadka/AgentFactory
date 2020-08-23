@@ -14,7 +14,7 @@ public class Factory {
 
     public Factory(Scenario scenario, AgentContainer container) throws StaleProxyException {
         // initialization based on the scenario
-        board = new Board(scenario.BoardWidth,scenario.BoardHeight);
+        board = new Board(scenario.boardWidth,scenario.boardHeight);
 
         int gomNumber = 3;
         Position[] gomPositions = new Position[gomNumber];

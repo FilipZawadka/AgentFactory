@@ -14,6 +14,6 @@ App {
         properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
         AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
 
-        Factory factory = new Factory(new Scenario(), mainContainer);
+        Factory factory = new Factory(new Scenario(0, 0), mainContainer);
     }
 }
