@@ -2,11 +2,10 @@ package biddingOntology;
 
 import jade.content.Concept;
 import jade.core.AID;
-import utils.Position;
 
 public class GomInfo implements Concept {
     private AID gomId;
-    private Position position;
+    private PositionInfo position;
 
     public AID getGomId() {
         return gomId;
@@ -16,11 +15,11 @@ public class GomInfo implements Concept {
         this.gomId = gomId;
     }
 
-    public Position getPosition() {
+    public PositionInfo getPosition() {
         return position;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(PositionInfo position) {
         this.position = position;
     }
 }

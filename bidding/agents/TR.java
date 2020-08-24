@@ -1,7 +1,7 @@
 package agents;
 
-import behaviours.HelpInitiator;
 import behaviours.HelpResponder;
+import behaviours.SendMaterialResponder;
 import biddingOntology.*;
 import board.Board;
 import board.BoardObject;
@@ -13,7 +13,6 @@ import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.*;
 import jade.domain.FIPAException;
@@ -25,9 +24,10 @@ import utils.Position;
 import java.util.*;
 
 public class TR extends Agent implements BoardObject {
+    public Codec codec = new SLCodec();
+    public Ontology onto = BiddingOntology.getInstance();
+
     private String id;
-    private Codec codec = new SLCodec();
-    private Ontology onto = BiddingOntology.getInstance();
     private GoM myGom;
     private Position position;
     public Board board;
@@ -88,19 +88,11 @@ public class TR extends Agent implements BoardObject {
         });
 
         // SEND HELP REQUESTS
-        // TODO change to cyclic whenever request from gom is received
-        addBehaviour(new TickerBehaviour(this, 10000) {
-            @Override
-            protected void onTick() {
-                if (myAgent.getLocalName().contains("TR1")) {
-                    ACLMessage bid = new ACLMessage(ACLMessage.CFP);
-                    ACLMessage gomRequest = new ACLMessage(ACLMessage.REQUEST);
-                    // info from the gom's request
-                    int trNumber = prepareCfp(gomRequest, bid, myAgent);
-                    myAgent.addBehaviour(new HelpInitiator(myAgent, bid, trNumber));
-                }
-            }
-        });
+        MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
+                MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
+                        MessageTemplate.MatchLanguage(codec.getName())));
+
+        addBehaviour(new SendMaterialResponder(this, mt));
 
         //Completing destinations
         //wysyłanie wiadomości chyba trzeba dodać
@@ -136,7 +128,7 @@ public class TR extends Agent implements BoardObject {
         }
     }
 
-    private int prepareCfp(ACLMessage gomRequest, ACLMessage bid, Agent bidder) {
+    public int prepareCfp(ACLMessage gomRequest, ACLMessage bid, Agent bidder) {
         ArrayList<AID> responders = new ArrayList<>();
 
         // to be retrieved from the gomRequest
@@ -144,12 +136,12 @@ public class TR extends Agent implements BoardObject {
         int tokens = 10;
 
         GomInfo destGom = new GomInfo();
-        destGom.setPosition(new Position(1, 1));
-        destGom.setGomId(new AID("someGom2", AID.ISLOCALNAME));
+        destGom.setPosition(new PositionInfo(1, 1));
+        destGom.setGomId(new AID("otherGoM", AID.ISLOCALNAME));
 
         GomInfo srcGom = new GomInfo();
-        destGom.setPosition(new Position(0, 0));
-        destGom.setGomId(new AID("someGom", AID.ISLOCALNAME));
+        destGom.setPosition(new PositionInfo(0, 0));
+        destGom.setGomId(new AID("GoM"+this.id, AID.ISLOCALNAME));
 
         // get other TRs
         DFAgentDescription template = new DFAgentDescription();

@@ -20,9 +20,13 @@ public class Factory {
         Position[] gomPositions = new Position[gomNumber];
 
         for(Integer i=0; i<gomNumber; i++){
-            gomPositions[i] = new Position();
-            //jak dodać board do agenta
-            AgentController ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i,board});
+            gomPositions[i] = new Position(0, 0);
+            AgentController ac = container.createNewAgent("GoM"+i.toString(), "agents.GoM",
+                    new Object[]{i, gomPositions[i].getX(),gomPositions[i].getY()});
+            ac.start();
+
+            ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i});
+
             ac.start();
         }
     }
