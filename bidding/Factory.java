@@ -26,6 +26,7 @@ public class Factory {
             ac.start();
 
             ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i});
+
             ac.start();
         }
     }

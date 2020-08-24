@@ -31,6 +31,10 @@ public class TR extends Agent implements BoardObject {
     private GoM myGom;
     private Position position;
     public Board board;
+    public Boolean busy;
+    public Integer timeOfInactivity;
+    public ArrayList<Position> destinations;
+
 
 
     @Override
@@ -50,9 +54,12 @@ public class TR extends Agent implements BoardObject {
     @Override
     protected void setup() {
         super.setup();
+        busy = false;
 
         Object[] args = getArguments();
         this.id = args[0].toString();
+        //nie mam pojęcia czy to zadziała
+        board = (Board)args[1];
 
         // add oneself to the df
         addToDf();
@@ -87,7 +94,24 @@ public class TR extends Agent implements BoardObject {
 
         addBehaviour(new SendMaterialResponder(this, mt));
 
-
+        //Completing destinations
+        //wysyłanie wiadomości chyba trzeba dodać
+        addBehaviour(new TickerBehaviour(this, 10000) {
+            @Override
+            protected void onTick() {
+               if(!busy){
+                   busy = true;
+                   if(destinations.size()==0){
+                       timeOfInactivity++;
+                   }
+                   else{
+                       timeOfInactivity=0;
+                       goTo(destinations.get(0));
+                       destinations.remove(0);
+                   }
+               }
+            }
+        });
     }
 
     private void addToDf() {
@@ -167,6 +191,44 @@ public class TR extends Agent implements BoardObject {
         }
 
         return trNumber;
+    }
+    public void moveUp() {
+        if(position.getY()<board.height){
+            position.setY(position.getY()+1);
+        }
+
+    }
+
+    public void moveDown() {
+        if(position.getY()>0){
+            position.setY(position.getY()-1);
+        }
+    }
+
+    public void moveLeft() {
+        if(position.getX()>0){
+            position.setX(position.getX()-1);
+        }
+    }
+
+    public void moveRight() {
+        if(position.getX()<board.width){
+            position.setX(position.getX()+1);
+        }
+    }
+    public void goTo(Position dest){
+        while(position.getX()<dest.getX()){
+            moveRight();
+        }
+        while(position.getX()>dest.getX()){
+            moveLeft();
+        }
+        while(position.getY()<dest.getY()){
+            moveUp();
+        }
+        while(position.getY()>dest.getY()){
+            moveDown();
+        }
     }
 
     @Override
