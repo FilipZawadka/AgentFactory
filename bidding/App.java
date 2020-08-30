@@ -6,8 +6,7 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import utils.Scenario;
 
-public class
-App {
+public class App {
 
     public static void main(String[] args) throws StaleProxyException {
         Properties properties = new Properties();

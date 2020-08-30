@@ -25,7 +25,7 @@ public class Factory {
                     new Object[]{i, gomPositions[i].getX(),gomPositions[i].getY()});
             ac.start();
 
-            ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i});
+            ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i, board});
 
             ac.start();
         }

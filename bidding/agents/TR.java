@@ -36,8 +36,6 @@ public class TR extends Agent implements BoardObject {
     public Integer timeOfInactivity;
     public ArrayList<Position> destinations;
 
-
-
     @Override
     public void setPosition(Position _position) {
         position = _position;
@@ -56,6 +54,8 @@ public class TR extends Agent implements BoardObject {
     protected void setup() {
         super.setup();
         busy = false;
+        destinations = new ArrayList<>();
+        timeOfInactivity = 0;
 
         Object[] args = getArguments();
         this.id = args[0].toString();
