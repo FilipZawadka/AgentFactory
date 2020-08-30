@@ -13,7 +13,7 @@ public class Cell {
 
     public Cell(Position position) {
         this.position = position;
-        content = new Hashtable<>();
+        content = new Hashtable<String,BoardObject>();
     }
     public void addContent(BoardObject obj){
         content.put(obj.getId(),obj);

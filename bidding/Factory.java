@@ -17,15 +17,15 @@ public class Factory {
         board = new Board(scenario.boardWidth,scenario.boardHeight);
 
         int gomNumber = 3;
-        Position[] gomPositions = new Position[gomNumber];
+        //Position[] positions = scenario.positions;
 
         for(Integer i=0; i<gomNumber; i++){
-            gomPositions[i] = new Position(0, 0);
+            //gomPositions[i] = new Position(0, 0);
             AgentController ac = container.createNewAgent("GoM"+i.toString(), "agents.GoM",
-                    new Object[]{i, gomPositions[i].getX(),gomPositions[i].getY()});
+                    new Object[]{i, scenario.positions[i]});
             ac.start();
 
-            ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i});
+            ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i,board,scenario.positions[i]});
 
             ac.start();
         }

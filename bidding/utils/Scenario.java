@@ -8,9 +8,11 @@ public class Scenario {
 
     public Integer boardWidth;
     public Integer boardHeight;
+    public Position[] positions;
 
-    public Scenario(Integer width, Integer height){
+    public Scenario(Integer width, Integer height,Position[] positions){
         this.boardWidth = width;
         this.boardHeight = height;
+        this.positions = positions;
     }
 }

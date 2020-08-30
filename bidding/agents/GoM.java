@@ -25,7 +25,10 @@ public class GoM extends Agent implements BoardObject {
         Object[] args = getArguments();
 
         this.id = args[0].toString();
-        this.position = new Position(Integer.parseInt(args[1].toString()), Integer.parseInt(args[2].toString()));
+        //this.position = new Position(Integer.parseInt(args[1].toString()), Integer.parseInt(args[2].toString()));
+        this.position = (Position) args[1];
+
+        System.out.println("I am GOM nr."+this.id+" I start in the ("+position.getX()+","+position.getY()+") position.");
 
         // for clear output
         if(getLocalName().contains("1")) {

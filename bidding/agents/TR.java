@@ -59,8 +59,10 @@ public class TR extends Agent implements BoardObject {
 
         Object[] args = getArguments();
         this.id = args[0].toString();
-        //nie mam pojęcia czy to zadziała
         board = (Board)args[1];
+        this.position = (Position) args[2];
+
+        System.out.println("I am TR nr."+this.id+" I start in the ("+position.getX()+","+position.getY()+") position.");
 
         // add oneself to the df
         addToDf();
