@@ -34,7 +34,7 @@ public class TR extends Agent implements BoardObject {
     public Board board;
     public Boolean busy;
     public Integer timeOfInactivity;
-    public ArrayList<Position> destinations;
+    public ArrayList<Destination> destinations;
 
     @Override
     public void setPosition(Position _position) {
@@ -60,7 +60,8 @@ public class TR extends Agent implements BoardObject {
         Object[] args = getArguments();
         this.id = args[0].toString();
         //nie mam pojęcia czy to zadziała
-        board = (Board)args[1];
+        this.board = (Board)args[1];
+        this.position = new Position((int)args[2], (int)args[3]);
 
         // add oneself to the df
         addToDf();
@@ -100,19 +101,40 @@ public class TR extends Agent implements BoardObject {
         addBehaviour(new TickerBehaviour(this, 10000) {
             @Override
             protected void onTick() {
+                System.out.println("TICK");
                if(!busy){
-                   busy = true;
+
                    if(destinations.size()==0){
                        timeOfInactivity++;
                    }
                    else{
+                       busy = true;
                        timeOfInactivity=0;
-                       goTo(destinations.get(0));
+                       Destination destination = destinations.get(0);
+                       Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
+                       goTo(destinationPosition);
+
+                       // info on reached destination to the TR that needed help
+                       ACLMessage result = (destination.getMessage()).createReply();
+                       result.setPerformative(ACLMessage.INFORM);
+                       send(result);
+                       System.out.println("INFORM: "+super.myAgent.getName()+result);
+
                        destinations.remove(0);
+
+                       // TODO do the carrying of the material and put the busy = false there
+                       busy = false;
                    }
                }
             }
         });
+    }
+
+    public void addDestination(Destination destination){
+        if(!destinations.contains(destination)){
+            destinations.add(destination);
+            System.out.println("Added: "+destination.toString());
+        }
     }
 
     private void addToDf() {
@@ -141,8 +163,8 @@ public class TR extends Agent implements BoardObject {
         destGom.setGomId(new AID("otherGoM", AID.ISLOCALNAME));
 
         GomInfo srcGom = new GomInfo();
-        destGom.setPosition(new PositionInfo(0, 0));
-        destGom.setGomId(new AID("GoM"+this.id, AID.ISLOCALNAME));
+        srcGom.setPosition(new PositionInfo(0, 0));
+        srcGom.setGomId(new AID("GoM"+this.id, AID.ISLOCALNAME));
 
         // get other TRs
         DFAgentDescription template = new DFAgentDescription();

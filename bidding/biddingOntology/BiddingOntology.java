@@ -2,13 +2,11 @@ package biddingOntology;
 
 import jade.content.AgentAction;
 import jade.content.Concept;
+import jade.content.Predicate;
 import jade.content.onto.BasicOntology;
 import jade.content.onto.Ontology;
 import jade.content.onto.OntologyException;
-import jade.content.schema.AgentActionSchema;
-import jade.content.schema.ConceptSchema;
-import jade.content.schema.PrimitiveSchema;
-import jade.content.schema.TermSchema;
+import jade.content.schema.*;
 
 import javax.swing.text.Position;
 
@@ -28,13 +26,18 @@ public class BiddingOntology extends Ontology {
     public static final String X_POS = "x";
     public static final String Y_POS = "y";
 
-    public static final String DESTINATION = "destGom";
-    public static final String SOURCE = "srcGom";
+    public static final String DESTINATION_GOM = "destGom";
+    public static final String SOURCE_GOM = "srcGom";
     public static final String TOKENS = "tokens";
 
 
     public static final String SEND_RESULT = "SendResult";
     public static final String RESULT = "result";
+
+    public static final String DESTINATION = "Destination";
+
+    public static final String MESSAGE = "message";
+
 
     private static Ontology theInstance = new BiddingOntology();
 
@@ -51,6 +54,7 @@ public class BiddingOntology extends Ontology {
             add(new ConceptSchema(GOM), GomInfo.class);
             add(new AgentActionSchema(GET_HELP), GetHelp.class);
             add(new AgentActionSchema(SEND_RESULT), SendResult.class);
+            add(new PredicateSchema(DESTINATION),Destination.class);
 
             ConceptSchema cs = (ConceptSchema) getSchema(POSITION);
             cs.add(X_POS, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
@@ -63,8 +67,8 @@ public class BiddingOntology extends Ontology {
             cs = (ConceptSchema) getSchema(PROPOSAL);
             cs.add(PROPOSAL_ID, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
             cs.add(NUMBER, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
-            cs.add(DESTINATION, (TermSchema)getSchema(GOM));
-            cs.add(SOURCE, (TermSchema)getSchema(GOM));
+            cs.add(DESTINATION_GOM, (TermSchema)getSchema(GOM));
+            cs.add(SOURCE_GOM, (TermSchema)getSchema(GOM));
             cs.add(TOKENS, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
 
             AgentActionSchema as = (AgentActionSchema) getSchema(GET_HELP);
@@ -72,6 +76,10 @@ public class BiddingOntology extends Ontology {
 
             as = (AgentActionSchema) getSchema(SEND_RESULT);
             as.add(RESULT, (PrimitiveSchema) getSchema(BasicOntology.FLOAT));
+
+            PredicateSchema p = (PredicateSchema) getSchema(DESTINATION);
+            p.add(POSITION, (TermSchema) getSchema(POSITION));
+            p.add(MESSAGE,(TermSchema)getSchema(BasicOntology.ACLMSG), ObjectSchema.OPTIONAL);
 
         }
         catch(OntologyException oe){

@@ -1,5 +1,12 @@
 package behaviours;
 
+import agents.TR;
+import biddingOntology.Destination;
+import biddingOntology.PositionInfo;
+import biddingOntology.Proposal;
+import jade.content.ContentElement;
+import jade.content.lang.Codec;
+import jade.content.onto.OntologyException;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
@@ -33,6 +40,17 @@ public class HelpInitiator extends ContractNetInitiator {
         for(int i=0;i<this.trNumber;i++){
             ACLMessage m = results.get(i).createReply();
             m.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+
+            try {
+                Destination d = new Destination();
+                d.setPosition(new PositionInfo(((TR)myAgent).getPosition().getX(), ((TR)myAgent).getPosition().getY()));
+                myAgent.getContentManager().fillContent(m, d);
+            } catch (Codec.CodecException e) {
+                e.printStackTrace();
+            } catch (OntologyException e) {
+                e.printStackTrace();
+            }
+
             acceptances.add(m);
             System.out.println("ACCEPT REPLY: "+m);
         }

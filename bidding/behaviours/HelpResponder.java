@@ -1,7 +1,11 @@
 package behaviours;
 
+import agents.TR;
 import biddingOntology.BiddingOntology;
+import biddingOntology.Destination;
+import biddingOntology.PositionInfo;
 import biddingOntology.SendResult;
+import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
@@ -13,6 +17,7 @@ import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SSContractNetResponder;
+import utils.Position;
 
 import java.util.Random;
 
@@ -57,11 +62,21 @@ public class HelpResponder extends SSContractNetResponder {
         // go and help
         // update status
         // inform about result of the action
-        ACLMessage result = accept.createReply();
-        result.setPerformative(ACLMessage.INFORM);
-        //result.setContent of the information
-        System.out.println("INFORM: "+super.myAgent.getName()+result);
-        return result;
+        ContentElement ce = null;
+        try {
+            ce = myAgent.getContentManager().extractContent(accept);
+        } catch (Codec.CodecException e) {
+            e.printStackTrace();
+        } catch (OntologyException e) {
+            e.printStackTrace();
+        }
+
+        if(ce instanceof Destination){
+            Destination destination = (Destination)ce;
+            ((Destination) ce).setMessage(accept);
+            ((TR)myAgent).addDestination(destination);
+        }
+
+        return null;
     }
 }
-
