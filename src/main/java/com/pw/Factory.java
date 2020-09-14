@@ -1,35 +1,36 @@
 package com.pw;
 
 import com.pw.board.Board;
-import com.pw.utils.Position;
-import com.pw.utils.Scenario;
-import jade.core.Agent;
+import com.pw.scenerios.GomDefinition;
+import com.pw.scenerios.Scenario;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
-import java.util.HashMap;
+import static com.pw.utils.Naming.GOM;
+import static com.pw.utils.Naming.TR;
 
 public class Factory {
-    Board board;
-    HashMap<Integer, Agent[]> agentPairs;
+    private static final String GOM_CLASS_NAME = "com.pw.agents.GoM";
+    private static final String TR_CLASS_NAME = "com.pw.agents.TR";
+
+    private Board board;
 
     public Factory(Scenario scenario, AgentContainer container) throws StaleProxyException {
         // initialization based on the scenario
-        board = new Board(scenario.boardWidth, scenario.boardHeight);
+        board = new Board(scenario.getBoardWidth(), scenario.getBoardHeight());
+        int gomCount = scenario.getGomDefinitions().size();
 
-        int gomNumber = 3;
-        Position[] gomPositions = new Position[gomNumber];
+        for (int i = 0; i < gomCount; i++) {
+            GomDefinition gomDefinition = scenario.getGomDefinitions().get(i);
 
-        for (Integer i = 0; i < gomNumber; i++) {
-            gomPositions[i] = new Position(0, 0);
-            AgentController ac = container.createNewAgent("GoM" + i.toString(), "com.pw.agents.GoM",
-                new Object[]{i, gomPositions[i].getX(), gomPositions[i].getY()});
-            ac.start();
+            Object[] gomArguments = new Object[]{i, gomDefinition.getPosition().getX(), gomDefinition.getPosition().getY()};
+            AgentController agentController = container.createNewAgent(GOM(i), GOM_CLASS_NAME, gomArguments);
+            agentController.start();
 
-            ac = container.createNewAgent("TR" + i.toString(), "com.pw.agents.TR", new Object[]{i, board});
-
-            ac.start();
+            Object[] trArguments = new Object[]{i, board};
+            agentController = container.createNewAgent(TR(i), TR_CLASS_NAME, trArguments);
+            agentController.start();
         }
     }
 }

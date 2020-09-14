@@ -62,7 +62,6 @@ public class TR extends Agent implements BoardObject {
 
         Object[] args = getArguments();
         this.id = args[0].toString();
-        //nie mam pojęcia czy to zadziała
         board = (Board) args[1];
 
         // add oneself to the df
@@ -76,8 +75,10 @@ public class TR extends Agent implements BoardObject {
 
         // RESPOND TO HELP REQUEST
         addBehaviour(new CyclicBehaviour() {
-            MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CFP),
-                MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
+            MessageTemplate mt = MessageTemplate.and(
+                MessageTemplate.MatchPerformative(ACLMessage.CFP),
+                MessageTemplate.and(
+                    MessageTemplate.MatchOntology(onto.getName()),
                     MessageTemplate.MatchLanguage(codec.getName())));
 
             @Override
@@ -92,8 +93,10 @@ public class TR extends Agent implements BoardObject {
         });
 
         // SEND HELP REQUESTS
-        MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
-            MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
+        MessageTemplate mt = MessageTemplate.and(
+            MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
+            MessageTemplate.and(
+                MessageTemplate.MatchOntology(onto.getName()),
                 MessageTemplate.MatchLanguage(codec.getName())));
 
         addBehaviour(new SendMaterialResponder(this, mt));

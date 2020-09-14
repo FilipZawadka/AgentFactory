@@ -1,6 +1,6 @@
 package com.pw;
 
-import com.pw.utils.Scenario;
+import com.pw.scenerios.Scenerio1;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -15,6 +15,6 @@ public class App {
         properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
         AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
 
-        Factory factory = new Factory(new Scenario(0, 0), mainContainer);
+        Factory factory = new Factory(new Scenerio1(), mainContainer);
     }
 }

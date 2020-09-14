@@ -5,10 +5,11 @@ import com.pw.board.BoardObject;
 import com.pw.utils.Position;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GOTr implements BoardObject {
     private Position position;
-    ArrayList<BoardObject> Trlist;
+    private List<BoardObject> trlist;
     private String id;
     public Board board;
     public Integer TRnum;
@@ -17,8 +18,8 @@ public class GOTr implements BoardObject {
         this.position = position;
         id = _id;
         this.board = board;
-        Trlist = new ArrayList<>();
-        Trlist.add(firstAgent);
+        trlist = new ArrayList<>();
+        trlist.add(firstAgent);
     }
 
 
@@ -39,8 +40,8 @@ public class GOTr implements BoardObject {
     }
 
     private void updateTRs() {
-        for (int i = 0; i < Trlist.size(); i++) {
-            Trlist.get(i).setPosition(position);
+        for (int i = 0; i < trlist.size(); i++) {
+            trlist.get(i).setPosition(position);
         }
 
     }
