@@ -1,9 +1,9 @@
-package utils;
+package com.pw.utils;
 
 import java.util.Comparator;
 
-import biddingOntology.BiddingOntology;
-import biddingOntology.SendResult;
+import com.pw.biddingOntology.BiddingOntology;
+import com.pw.biddingOntology.SendResult;
 import jade.content.ContentElement;
 import jade.content.ContentManager;
 import jade.content.lang.Codec;

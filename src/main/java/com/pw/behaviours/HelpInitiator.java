@@ -1,4 +1,4 @@
-package behaviours;
+package com.pw.behaviours;
 
 import java.util.Collections;
 import java.util.Vector;
@@ -6,7 +6,7 @@ import java.util.Vector;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
-import utils.MessageComparator;
+import com.pw.utils.MessageComparator;
 
 public class HelpInitiator extends ContractNetInitiator {
     private int trNumber;

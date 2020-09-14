@@ -1,14 +1,14 @@
-package agents;
+package com.pw.agents;
 
-import behaviours.SendMaterialInitiator;
-import biddingOntology.BiddingOntology;
-import board.BoardObject;
+import com.pw.behaviours.SendMaterialInitiator;
+import com.pw.biddingOntology.BiddingOntology;
+import com.pw.board.BoardObject;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.core.AID;
 import jade.core.Agent;
-import utils.Position;
+import com.pw.utils.Position;
 
 public class GoM extends Agent implements BoardObject {
     public Codec codec = new SLCodec();

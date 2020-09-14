@@ -1,8 +1,8 @@
-package board;
+package com.pw.board;
 
 import java.util.Hashtable;
 
-import utils.Position;
+import com.pw.utils.Position;
 
 public class Cell {
     private Position position;

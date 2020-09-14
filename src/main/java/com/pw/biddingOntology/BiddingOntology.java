@@ -1,4 +1,4 @@
-package biddingOntology;
+package com.pw.biddingOntology;
 
 import jade.content.onto.BasicOntology;
 import jade.content.onto.Ontology;

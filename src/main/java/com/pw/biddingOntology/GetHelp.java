@@ -1,4 +1,4 @@
-package biddingOntology;
+package com.pw.biddingOntology;
 
 import jade.content.AgentAction;
 

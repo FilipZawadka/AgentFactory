@@ -1,12 +1,14 @@
+package com.pw;
+
 import java.util.HashMap;
 
-import board.Board;
+import com.pw.board.Board;
 import jade.core.Agent;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
-import utils.Position;
-import utils.Scenario;
+import com.pw.utils.Position;
+import com.pw.utils.Scenario;
 
 public class Factory {
     Board board;
@@ -21,11 +23,11 @@ public class Factory {
 
         for(Integer i=0; i<gomNumber; i++){
             gomPositions[i] = new Position(0, 0);
-            AgentController ac = container.createNewAgent("GoM"+i.toString(), "agents.GoM",
+            AgentController ac = container.createNewAgent("GoM"+i.toString(), "com.pw.agents.GoM",
                     new Object[]{i, gomPositions[i].getX(),gomPositions[i].getY()});
             ac.start();
 
-            ac = container.createNewAgent("TR"+i.toString(), "agents.TR", new Object[]{i, board});
+            ac = container.createNewAgent("TR"+i.toString(), "com.pw.agents.TR", new Object[]{i, board});
 
             ac.start();
         }

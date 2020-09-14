@@ -1,8 +1,8 @@
-package behaviours;
+package com.pw.behaviours;
 
 import java.util.Vector;
 
-import agents.GoM;
+import com.pw.agents.GoM;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;

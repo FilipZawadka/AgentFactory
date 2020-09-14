@@ -1,17 +1,17 @@
-package agents;
+package com.pw.agents;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import behaviours.HelpResponder;
-import behaviours.SendMaterialResponder;
-import biddingOntology.BiddingOntology;
-import biddingOntology.GetHelp;
-import biddingOntology.GomInfo;
-import biddingOntology.PositionInfo;
-import biddingOntology.Proposal;
-import board.Board;
-import board.BoardObject;
+import com.pw.behaviours.HelpResponder;
+import com.pw.behaviours.SendMaterialResponder;
+import com.pw.biddingOntology.BiddingOntology;
+import com.pw.biddingOntology.GetHelp;
+import com.pw.biddingOntology.GomInfo;
+import com.pw.biddingOntology.PositionInfo;
+import com.pw.biddingOntology.Proposal;
+import com.pw.board.Board;
+import com.pw.board.BoardObject;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
@@ -28,7 +28,7 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import utils.Position;
+import com.pw.utils.Position;
 
 public class TR extends Agent implements BoardObject {
     public Codec codec = new SLCodec();

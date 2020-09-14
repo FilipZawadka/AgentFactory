@@ -1,9 +1,9 @@
-package behaviours;
+package com.pw.behaviours;
 
 import java.util.Random;
 
-import biddingOntology.BiddingOntology;
-import biddingOntology.SendResult;
+import com.pw.biddingOntology.BiddingOntology;
+import com.pw.biddingOntology.SendResult;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;

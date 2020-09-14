@@ -1,4 +1,4 @@
-package utils;
+package com.pw.utils;
 
 public class Position{
     private Integer x,y;

@@ -1,6 +1,6 @@
-package behaviours;
+package com.pw.behaviours;
 
-import agents.TR;
+import com.pw.agents.TR;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;

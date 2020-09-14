@@ -1,6 +1,6 @@
-package board;
+package com.pw.board;
 
-import utils.Position;
+import com.pw.utils.Position;
 
 public interface BoardObject {
     void setPosition(Position position);

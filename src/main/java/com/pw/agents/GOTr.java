@@ -1,10 +1,10 @@
-package agents;
+package com.pw.agents;
 
 import java.util.ArrayList;
 
-import board.Board;
-import board.BoardObject;
-import utils.Position;
+import com.pw.board.Board;
+import com.pw.board.BoardObject;
+import com.pw.utils.Position;
 
 public class GOTr implements BoardObject {
     private Position position;
