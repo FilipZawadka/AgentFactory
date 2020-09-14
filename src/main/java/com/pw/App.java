@@ -1,12 +1,12 @@
 package com.pw;
 
+import com.pw.utils.Scenario;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.util.leap.Properties;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
-import com.pw.utils.Scenario;
 
 public class App {
 

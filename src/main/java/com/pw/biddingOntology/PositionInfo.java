@@ -3,13 +3,13 @@ package com.pw.biddingOntology;
 import jade.content.Concept;
 
 public class PositionInfo implements Concept {
-    private Integer x,y;
+    private Integer x, y;
 
-    public PositionInfo(){
+    public PositionInfo() {
 
     }
 
-    public PositionInfo(Integer x, Integer y){
+    public PositionInfo(Integer x, Integer y) {
         this.x = x;
         this.y = y;
     }

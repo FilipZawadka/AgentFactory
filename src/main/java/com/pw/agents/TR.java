@@ -1,17 +1,11 @@
 package com.pw.agents;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import com.pw.behaviours.HelpResponder;
 import com.pw.behaviours.SendMaterialResponder;
-import com.pw.biddingOntology.BiddingOntology;
-import com.pw.biddingOntology.GetHelp;
-import com.pw.biddingOntology.GomInfo;
-import com.pw.biddingOntology.PositionInfo;
-import com.pw.biddingOntology.Proposal;
+import com.pw.biddingOntology.*;
 import com.pw.board.Board;
 import com.pw.board.BoardObject;
+import com.pw.utils.Position;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
@@ -28,7 +22,9 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import com.pw.utils.Position;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class TR extends Agent implements BoardObject {
     public Codec codec = new SLCodec();
@@ -56,6 +52,7 @@ public class TR extends Agent implements BoardObject {
     public String getId() {
         return id;
     }
+
     @Override
     protected void setup() {
         super.setup();
@@ -66,7 +63,7 @@ public class TR extends Agent implements BoardObject {
         Object[] args = getArguments();
         this.id = args[0].toString();
         //nie mam pojęcia czy to zadziała
-        board = (Board)args[1];
+        board = (Board) args[1];
 
         // add oneself to the df
         addToDf();
@@ -80,8 +77,8 @@ public class TR extends Agent implements BoardObject {
         // RESPOND TO HELP REQUEST
         addBehaviour(new CyclicBehaviour() {
             MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CFP),
-                    MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
-                            MessageTemplate.MatchLanguage(codec.getName())));
+                MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
+                    MessageTemplate.MatchLanguage(codec.getName())));
 
             @Override
             public void action() {
@@ -96,8 +93,8 @@ public class TR extends Agent implements BoardObject {
 
         // SEND HELP REQUESTS
         MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
-                MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
-                        MessageTemplate.MatchLanguage(codec.getName())));
+            MessageTemplate.and(MessageTemplate.MatchOntology(onto.getName()),
+                MessageTemplate.MatchLanguage(codec.getName())));
 
         addBehaviour(new SendMaterialResponder(this, mt));
 
@@ -106,17 +103,16 @@ public class TR extends Agent implements BoardObject {
         addBehaviour(new TickerBehaviour(this, 10000) {
             @Override
             protected void onTick() {
-               if(!busy){
-                   busy = true;
-                   if(destinations.size()==0){
-                       timeOfInactivity++;
-                   }
-                   else{
-                       timeOfInactivity=0;
-                       goTo(destinations.get(0));
-                       destinations.remove(0);
-                   }
-               }
+                if (!busy) {
+                    busy = true;
+                    if (destinations.size() == 0) {
+                        timeOfInactivity++;
+                    } else {
+                        timeOfInactivity = 0;
+                        goTo(destinations.get(0));
+                        destinations.remove(0);
+                    }
+                }
             }
         });
     }
@@ -148,7 +144,7 @@ public class TR extends Agent implements BoardObject {
 
         GomInfo srcGom = new GomInfo();
         destGom.setPosition(new PositionInfo(0, 0));
-        destGom.setGomId(new AID("GoM"+this.id, AID.ISLOCALNAME));
+        destGom.setGomId(new AID("GoM" + this.id, AID.ISLOCALNAME));
 
         // get other TRs
         DFAgentDescription template = new DFAgentDescription();
@@ -199,41 +195,43 @@ public class TR extends Agent implements BoardObject {
 
         return trNumber;
     }
+
     public void moveUp() {
-        if(position.getY()<board.height){
-            position.setY(position.getY()+1);
+        if (position.getY() < board.height) {
+            position.setY(position.getY() + 1);
         }
 
     }
 
     public void moveDown() {
-        if(position.getY()>0){
-            position.setY(position.getY()-1);
+        if (position.getY() > 0) {
+            position.setY(position.getY() - 1);
         }
     }
 
     public void moveLeft() {
-        if(position.getX()>0){
-            position.setX(position.getX()-1);
+        if (position.getX() > 0) {
+            position.setX(position.getX() - 1);
         }
     }
 
     public void moveRight() {
-        if(position.getX()<board.width){
-            position.setX(position.getX()+1);
+        if (position.getX() < board.width) {
+            position.setX(position.getX() + 1);
         }
     }
-    public void goTo(Position dest){
-        while(position.getX()<dest.getX()){
+
+    public void goTo(Position dest) {
+        while (position.getX() < dest.getX()) {
             moveRight();
         }
-        while(position.getX()>dest.getX()){
+        while (position.getX() > dest.getX()) {
             moveLeft();
         }
-        while(position.getY()<dest.getY()){
+        while (position.getY() < dest.getY()) {
             moveUp();
         }
-        while(position.getY()>dest.getY()){
+        while (position.getY() > dest.getY()) {
             moveDown();
         }
     }

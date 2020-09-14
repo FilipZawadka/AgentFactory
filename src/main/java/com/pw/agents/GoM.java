@@ -3,12 +3,12 @@ package com.pw.agents;
 import com.pw.behaviours.SendMaterialInitiator;
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.board.BoardObject;
+import com.pw.utils.Position;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
 import jade.core.AID;
 import jade.core.Agent;
-import com.pw.utils.Position;
 
 public class GoM extends Agent implements BoardObject {
     public Codec codec = new SLCodec();
@@ -28,7 +28,7 @@ public class GoM extends Agent implements BoardObject {
         this.position = new Position(Integer.parseInt(args[1].toString()), Integer.parseInt(args[2].toString()));
 
         // for clear output
-        if(getLocalName().contains("1")) {
+        if (getLocalName().contains("1")) {
             addBehaviour(new SendMaterialInitiator(this, 10000));
         }
     }

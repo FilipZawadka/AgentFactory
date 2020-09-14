@@ -1,9 +1,10 @@
 package com.pw.board;
 
+import com.pw.utils.Position;
+import jade.core.Agent;
+
 import java.util.Map;
 
-import jade.core.Agent;
-import com.pw.utils.Position;
 public class
 Board extends Agent {
     public Map<Position, Cell> cells;

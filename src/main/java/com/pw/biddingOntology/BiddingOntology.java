@@ -34,14 +34,14 @@ public class BiddingOntology extends Ontology {
 
     private static Ontology theInstance = new BiddingOntology();
 
-    public static Ontology getInstance(){
+    public static Ontology getInstance() {
         return theInstance;
     }
 
-    private BiddingOntology(){
+    private BiddingOntology() {
         super(ONTOLOGY_NAME, BasicOntology.getInstance());
 
-        try{
+        try {
             add(new ConceptSchema(POSITION), PositionInfo.class);
             add(new ConceptSchema(PROPOSAL), Proposal.class);
             add(new ConceptSchema(GOM), GomInfo.class);
@@ -49,19 +49,19 @@ public class BiddingOntology extends Ontology {
             add(new AgentActionSchema(SEND_RESULT), SendResult.class);
 
             ConceptSchema cs = (ConceptSchema) getSchema(POSITION);
-            cs.add(X_POS, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
-            cs.add(Y_POS, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
+            cs.add(X_POS, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
+            cs.add(Y_POS, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
 
             cs = (ConceptSchema) getSchema(GOM);
-            cs.add(GOM_ID, (TermSchema)getSchema(BasicOntology.AID));
+            cs.add(GOM_ID, (TermSchema) getSchema(BasicOntology.AID));
             cs.add(POSITION, (TermSchema) getSchema(POSITION));
 
             cs = (ConceptSchema) getSchema(PROPOSAL);
-            cs.add(PROPOSAL_ID, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
-            cs.add(NUMBER, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
-            cs.add(DESTINATION, (TermSchema)getSchema(GOM));
-            cs.add(SOURCE, (TermSchema)getSchema(GOM));
-            cs.add(TOKENS, (PrimitiveSchema)getSchema(BasicOntology.INTEGER));
+            cs.add(PROPOSAL_ID, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
+            cs.add(NUMBER, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
+            cs.add(DESTINATION, (TermSchema) getSchema(GOM));
+            cs.add(SOURCE, (TermSchema) getSchema(GOM));
+            cs.add(TOKENS, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
 
             AgentActionSchema as = (AgentActionSchema) getSchema(GET_HELP);
             as.add(PROPOSAL, (ConceptSchema) getSchema(PROPOSAL));
@@ -69,8 +69,7 @@ public class BiddingOntology extends Ontology {
             as = (AgentActionSchema) getSchema(SEND_RESULT);
             as.add(RESULT, (PrimitiveSchema) getSchema(BasicOntology.FLOAT));
 
-        }
-        catch(OntologyException oe){
+        } catch (OntologyException oe) {
             oe.printStackTrace();
         }
     }

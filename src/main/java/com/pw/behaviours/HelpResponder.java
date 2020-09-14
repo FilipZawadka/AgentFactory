@@ -1,7 +1,5 @@
 package com.pw.behaviours;
 
-import java.util.Random;
-
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.biddingOntology.SendResult;
 import jade.content.lang.Codec;
@@ -15,6 +13,8 @@ import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SSContractNetResponder;
+
+import java.util.Random;
 
 public class HelpResponder extends SSContractNetResponder {
     private Codec codec = new SLCodec();
@@ -47,7 +47,7 @@ public class HelpResponder extends SSContractNetResponder {
             oe.printStackTrace();
         }
 
-        System.out.println("REPLY: "+reply);
+        System.out.println("REPLY: " + reply);
 
         return reply;
     }
@@ -60,7 +60,7 @@ public class HelpResponder extends SSContractNetResponder {
         ACLMessage result = accept.createReply();
         result.setPerformative(ACLMessage.INFORM);
         //result.setContent of the information
-        System.out.println("INFORM: "+super.myAgent.getName()+result);
+        System.out.println("INFORM: " + super.myAgent.getName() + result);
         return result;
     }
 }

@@ -1,13 +1,13 @@
 package com.pw.utils;
 
-public class Position{
-    private Integer x,y;
+public class Position {
+    private Integer x, y;
 
-    public Position(){
+    public Position() {
 
     }
 
-    public Position(Integer x, Integer y){
+    public Position(Integer x, Integer y) {
         this.x = x;
         this.y = y;
     }

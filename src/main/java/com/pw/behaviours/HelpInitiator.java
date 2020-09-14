@@ -1,12 +1,12 @@
 package com.pw.behaviours;
 
-import java.util.Collections;
-import java.util.Vector;
-
+import com.pw.utils.MessageComparator;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
-import com.pw.utils.MessageComparator;
+
+import java.util.Collections;
+import java.util.Vector;
 
 public class HelpInitiator extends ContractNetInitiator {
     private int trNumber;
@@ -22,19 +22,19 @@ public class HelpInitiator extends ContractNetInitiator {
         System.out.println("HANDLE RESPONSES");
         java.util.ArrayList<ACLMessage> results = new java.util.ArrayList<>();
         // process all the utility function results
-        for(Object proposal:responses){
-            if(((ACLMessage)proposal).getPerformative()==ACLMessage.PROPOSE){
-                results.add((ACLMessage)proposal);
+        for (Object proposal : responses) {
+            if (((ACLMessage) proposal).getPerformative() == ACLMessage.PROPOSE) {
+                results.add((ACLMessage) proposal);
             }
         }
         MessageComparator comparator = new MessageComparator();
         Collections.sort(results, comparator);
         // accept best trNumber proposals
-        for(int i=0;i<this.trNumber;i++){
+        for (int i = 0; i < this.trNumber; i++) {
             ACLMessage m = results.get(i).createReply();
             m.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             acceptances.add(m);
-            System.out.println("ACCEPT REPLY: "+m);
+            System.out.println("ACCEPT REPLY: " + m);
         }
     }
 }

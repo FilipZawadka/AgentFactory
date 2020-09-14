@@ -1,10 +1,10 @@
 package com.pw.agents;
 
-import java.util.ArrayList;
-
 import com.pw.board.Board;
 import com.pw.board.BoardObject;
 import com.pw.utils.Position;
+
+import java.util.ArrayList;
 
 public class GOTr implements BoardObject {
     private Position position;
@@ -37,52 +37,54 @@ public class GOTr implements BoardObject {
     public String getId() {
         return id;
     }
-    private void updateTRs(){
-        for(int i =0;i<Trlist.size();i++){
+
+    private void updateTRs() {
+        for (int i = 0; i < Trlist.size(); i++) {
             Trlist.get(i).setPosition(position);
         }
 
     }
 
     public void moveUp() {
-        if(position.getY()<board.height){
-            position.setY(position.getY()+1);
+        if (position.getY() < board.height) {
+            position.setY(position.getY() + 1);
             updateTRs();
         }
 
     }
 
     public void moveDown() {
-        if(position.getY()>0){
-            position.setY(position.getY()-1);
+        if (position.getY() > 0) {
+            position.setY(position.getY() - 1);
             updateTRs();
         }
     }
 
     public void moveLeft() {
-        if(position.getX()>0){
-            position.setX(position.getX()-1);
+        if (position.getX() > 0) {
+            position.setX(position.getX() - 1);
             updateTRs();
         }
     }
 
     public void moveRight() {
-        if(position.getX()<board.width){
-            position.setX(position.getX()+1);
+        if (position.getX() < board.width) {
+            position.setX(position.getX() + 1);
             updateTRs();
         }
     }
-    public void goTo(Position dest){
-        while(position.getX()<dest.getX()){
+
+    public void goTo(Position dest) {
+        while (position.getX() < dest.getX()) {
             moveRight();
         }
-        while(position.getX()>dest.getX()){
+        while (position.getX() > dest.getX()) {
             moveLeft();
         }
-        while(position.getY()<dest.getY()){
+        while (position.getY() < dest.getY()) {
             moveUp();
         }
-        while(position.getY()>dest.getY()){
+        while (position.getY() > dest.getY()) {
             moveDown();
         }
     }
