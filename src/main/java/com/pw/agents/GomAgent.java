@@ -9,22 +9,24 @@ import com.pw.utils.Position;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
-import jade.core.AID;
 import jade.core.Agent;
+import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPANames;
 import lombok.Getter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.String.format;
+
 @Getter
 public class GomAgent extends Agent implements BoardObject {
-    private Codec codec = new SLCodec();
-    private Ontology onto = BiddingOntology.getInstance();
+    private final Codec codec = new SLCodec();
+    private final Ontology onto = BiddingOntology.getInstance();
 
     private final Map<Material, Integer> materials = new ConcurrentHashMap<>();
 
     private GomDefinition definition;
-    private AID gomId;
 
     @Override
     protected void setup() {
@@ -33,15 +35,14 @@ public class GomAgent extends Agent implements BoardObject {
         Object[] args = getArguments();
         this.definition = (GomDefinition) args[0];
 
-        addBehaviour(new GomProcessingBehavior(this, 1000));
-    }
+        getContentManager().registerLanguage(codec, FIPANames.ContentLanguage.FIPA_SL);
+        getContentManager().registerOntology(onto);
 
-    public AID getGomId() {
-        return gomId;
-    }
-
-    public void setGomId(AID gomId) {
-        this.gomId = gomId;
+        addMaterialGenerationBehaviors();
+        addBehaviour(new GomProcessingBehavior(this, 500));
+        if (this.definition.isFinal()) {
+            addFinalGomBehavior();
+        }
     }
 
     @Override
@@ -59,5 +60,34 @@ public class GomAgent extends Agent implements BoardObject {
         return "" + definition.getNumber();
     }
 
+    private void addMaterialGenerationBehaviors() {
+        this.definition.getMaterialGenerators().forEach(generator -> {
+            addBehaviour(new TickerBehaviour(this, generator.getInterval()) {
+                @Override
+                protected void onTick() {
+                    GomAgent agent = (GomAgent) myAgent;
+                    Material material = generator.getMaterial();
+                    Integer amount = generator.getAmount();
+                    Map<Material, Integer> materials = agent.getMaterials();
 
+                    materials.putIfAbsent(material, 0);
+                    materials.put(material, materials.get(material) + amount);
+                }
+            });
+        });
+    }
+
+    private void addFinalGomBehavior() {
+        addBehaviour(new TickerBehaviour(this, 1000) {
+            @Override
+            protected void onTick() {
+                GomAgent agent = (GomAgent) myAgent;
+                if (!agent.getMaterials().isEmpty()) {
+                    agent.getMaterials().forEach((material, amount) -> {
+                        System.out.println(format("%s units of %s arrived to final GOM (#%s)", amount, material, agent.getDefinition().getNumber()));
+                    });
+                }
+            }
+        });
+    }
 }

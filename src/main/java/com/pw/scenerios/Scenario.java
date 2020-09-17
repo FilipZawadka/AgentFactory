@@ -12,7 +12,7 @@ public abstract class Scenario {
 
     protected final List<GomDefinition> gomDefinitions = new ArrayList<>();
 
-    public Scenario(Integer boardWidth, Integer boardHeight) {
+    protected Scenario(Integer boardWidth, Integer boardHeight) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
     }

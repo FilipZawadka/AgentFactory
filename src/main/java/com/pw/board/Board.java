@@ -5,8 +5,7 @@ import jade.core.Agent;
 
 import java.util.Map;
 
-public class
-Board extends Agent {
+public class Board extends Agent {
     public Map<Position, Cell> cells;
     public int width, height;
 

@@ -39,7 +39,7 @@ public class BiddingOntology extends Ontology {
     public static final String GOM_JOB_REQUEST = "gomJobRequest";
     public static final String GOM_JOB_REQUEST_FROM = "from";
     public static final String GOM_JOB_REQUEST_TO = "to";
-    public static final String GOM_JOB_REQUEST_MATERIAL = "material";
+    public static final String GOM_JOB_REQUEST_MATERIAL = "materialInfo";
 
 
     private static Ontology theInstance = new BiddingOntology();
