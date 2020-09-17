@@ -5,31 +5,62 @@ import com.pw.biddingOntology.GomInfo;
 import com.pw.biddingOntology.GomJobRequest;
 import com.pw.biddingOntology.MaterialInfo;
 import com.pw.biddingOntology.PositionInfo;
-import jade.content.lang.Codec;
-import jade.content.onto.OntologyException;
+import com.pw.scenerios.GomDefinition;
+import com.pw.utils.GomProcess;
+import com.pw.utils.Material;
 import jade.content.onto.basic.Action;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.proto.AchieveREInitiator;
 import lombok.SneakyThrows;
 
+import java.util.Map;
 import java.util.Vector;
 
 import static com.pw.utils.Naming.GOM;
 import static com.pw.utils.Naming.TR;
 
-public class SendMaterialInitiator extends TickerBehaviour {
+public class GomProcessingBehavior extends TickerBehaviour {
 
-    public SendMaterialInitiator(Agent a, long period) {
+    public GomProcessingBehavior(GomAgent a, long period) {
         super(a, period);
     }
 
-    @SneakyThrows
     @Override
     protected void onTick() {
-        ACLMessage request = createRequest();
+        GomAgent agent = (GomAgent) myAgent;
+        Map<Material, Integer> availableMaterials = agent.getMaterials();
+
+        agent.getDefinition().getProcesses().forEach(process -> {
+            Map<Material, Integer> requiredMaterials = process.getInputMaterials();
+            if (!isThereEnoughMaterialsToStartProcess(availableMaterials, requiredMaterials)) {
+                return;
+            }
+            requiredMaterials.forEach((material, amount) ->
+                availableMaterials.put(material, availableMaterials.get(material) - amount));
+            startProcess(process);
+        });
+    }
+
+    private boolean isThereEnoughMaterialsToStartProcess(Map<Material, Integer> availableMaterials, Map<Material, Integer> requiredMaterials) {
+        for (Map.Entry<Material, Integer> entry : requiredMaterials.entrySet()) {
+            if (!availableMaterials.containsKey(entry.getKey()) || availableMaterials.get(entry.getKey()) < entry.getValue()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void startProcess(GomProcess process) {
+        //TODO: May want to add some processing delay later..
+        // ..
+
+        sendJobToTR(process.getOutputMaterial(), process.getOutputMaterialAmount(), process.getDestination());
+    }
+
+    private void sendJobToTR(Material material, Integer amount, GomDefinition destination) {
+        ACLMessage request = createJobRequestToTR();
 
         myAgent.addBehaviour(new AchieveREInitiator(myAgent, request) {
             @Override
@@ -43,7 +74,8 @@ public class SendMaterialInitiator extends TickerBehaviour {
         });
     }
 
-    private ACLMessage createRequest() throws Codec.CodecException, OntologyException {
+    @SneakyThrows
+    private ACLMessage createJobRequestToTR() {
         GomAgent agent = (GomAgent) myAgent;
 
         //TODO fill with data:
@@ -61,5 +93,6 @@ public class SendMaterialInitiator extends TickerBehaviour {
         agent.getContentManager().fillContent(request, action);
 
         return request;
+
     }
 }

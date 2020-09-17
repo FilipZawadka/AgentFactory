@@ -22,21 +22,23 @@ import jade.domain.FIPAException;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class TR extends Agent implements BoardObject {
+@Getter
+public class TrAgent extends Agent implements BoardObject {
     public Codec codec = new SLCodec();
     public Ontology onto = BiddingOntology.getInstance();
 
     private String id;
-    private GoM myGom;
+    private GomAgent myGom;
     private Position position;
-    public Board board;
-    public Boolean busy;
-    public Integer timeOfInactivity;
-    public ArrayList<Position> destinations;
+    private Board board;
+    private Boolean busy;
+    private Integer timeOfInactivity;
+    private ArrayList<Position> destinations;
 
     @Override
     public void setPosition(Position _position) {
@@ -56,85 +58,26 @@ public class TR extends Agent implements BoardObject {
     @Override
     protected void setup() {
         super.setup();
-        busy = false;
-        destinations = new ArrayList<>();
-        timeOfInactivity = 0;
 
+        this.busy = false;
+        this.destinations = new ArrayList<>();
+        this.timeOfInactivity = 0;
         Object[] args = getArguments();
         this.id = args[0].toString();
-        board = (Board) args[1];
+        this.board = (Board) args[1];
 
         // add oneself to the df
         addToDf();
 
-        // info on TR's gom
-        // myGom = getMyGom();
-
         getContentManager().registerLanguage(codec, FIPANames.ContentLanguage.FIPA_SL);
         getContentManager().registerOntology(onto);
 
-        // RESPOND TO HELP REQUEST
-        addBehaviour(new CyclicBehaviour() {
-            MessageTemplate mt = MessageTemplate.and(
-                MessageTemplate.MatchPerformative(ACLMessage.CFP),
-                MessageTemplate.and(
-                    MessageTemplate.MatchOntology(onto.getName()),
-                    MessageTemplate.MatchLanguage(codec.getName())));
-
-            @Override
-            public void action() {
-                ACLMessage cfp = myAgent.receive(mt);
-                if (cfp != null) {
-                    myAgent.addBehaviour(new HelpResponder(myAgent, cfp));
-                } else {
-                    block();
-                }
-            }
-        });
-
-        // SEND HELP REQUESTS
-        MessageTemplate mt = MessageTemplate.and(
-            MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
-            MessageTemplate.and(
-                MessageTemplate.MatchOntology(onto.getName()),
-                MessageTemplate.MatchLanguage(codec.getName())));
-
-        addBehaviour(new SendMaterialResponder(this, mt));
-
-        //Completing destinations
-        //wysyłanie wiadomości chyba trzeba dodać
-        addBehaviour(new TickerBehaviour(this, 10000) {
-            @Override
-            protected void onTick() {
-                if (!busy) {
-                    busy = true;
-                    if (destinations.size() == 0) {
-                        timeOfInactivity++;
-                    } else {
-                        timeOfInactivity = 0;
-                        goTo(destinations.get(0));
-                        destinations.remove(0);
-                    }
-                }
-            }
-        });
+        addHelpRespondingBehavior();
+        addGomRespondingAndHelpRequestBehaviors();
+        addMovingBehavior();
     }
 
-    private void addToDf() {
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("tr");
-        sd.setName("factory1");
-        dfd.addServices(sd);
-        try {
-            DFService.register(this, dfd);
-        } catch (FIPAException fe) {
-            fe.printStackTrace();
-        }
-    }
-
-    public int prepareCfp(ACLMessage gomRequest, ACLMessage bid, Agent bidder) {
+    public int prepareHelpCfp(ACLMessage gomRequest, ACLMessage bid, Agent bidder) {
         ArrayList<AID> responders = new ArrayList<>();
 
         // to be retrieved from the gomRequest
@@ -239,10 +182,66 @@ public class TR extends Agent implements BoardObject {
         }
     }
 
-    @Override
-    protected void takeDown() {
-        super.takeDown();
+    private void addToDf() {
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("tr");
+        sd.setName("factory1");
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
+        }
     }
 
+    private void addGomRespondingAndHelpRequestBehaviors() {
+        MessageTemplate mt = MessageTemplate.and(
+            MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
+            MessageTemplate.and(
+                MessageTemplate.MatchOntology(onto.getName()),
+                MessageTemplate.MatchLanguage(codec.getName())));
+
+        addBehaviour(new SendMaterialResponder(this, mt));
+    }
+
+    private void addHelpRespondingBehavior() {
+        addBehaviour(new CyclicBehaviour() {
+            MessageTemplate mt = MessageTemplate.and(
+                MessageTemplate.MatchPerformative(ACLMessage.CFP),
+                MessageTemplate.and(
+                    MessageTemplate.MatchOntology(onto.getName()),
+                    MessageTemplate.MatchLanguage(codec.getName())));
+
+            @Override
+            public void action() {
+                ACLMessage cfp = myAgent.receive(mt);
+                if (cfp != null) {
+                    myAgent.addBehaviour(new HelpResponder(myAgent, cfp));
+                } else {
+                    block();
+                }
+            }
+        });
+    }
+
+    private void addMovingBehavior() {
+        addBehaviour(new TickerBehaviour(this, 10000) {
+            @Override
+            protected void onTick() {
+                if (!busy) {
+                    busy = true;
+                    if (destinations.size() == 0) {
+                        timeOfInactivity++;
+                    } else {
+                        timeOfInactivity = 0;
+                        goTo(destinations.get(0));
+                        destinations.remove(0);
+                    }
+                }
+            }
+        });
+    }
 
 }

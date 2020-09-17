@@ -1,6 +1,6 @@
 package com.pw.behaviours;
 
-import com.pw.agents.TR;
+import com.pw.agents.TrAgent;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -14,7 +14,7 @@ public class SendMaterialResponder extends AchieveREResponder {
     protected ACLMessage handleRequest(ACLMessage request) {
         ACLMessage bid = new ACLMessage(ACLMessage.CFP);
         // info from the gom's request
-        int trNumber = ((TR) myAgent).prepareCfp(request, bid, myAgent);
+        int trNumber = ((TrAgent) myAgent).prepareHelpCfp(request, bid, myAgent);
         myAgent.addBehaviour(new HelpInitiator(myAgent, bid, trNumber));
 
         ACLMessage response = request.createReply();
