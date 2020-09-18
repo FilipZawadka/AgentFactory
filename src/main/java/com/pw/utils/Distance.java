@@ -15,4 +15,14 @@ public class Distance {
     public static int absolute(PositionInfo p1, PositionInfo p2){
         return abs(p1.getX() - p2.getX())+ abs(p1.getY() - p2.getY());
     }
+    public static boolean isEqual(PositionInfo p1, PositionInfo p2) {
+    return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
+    }
+    public static int absolute(Position p1, Position p2){
+        return abs(p1.getX() - p2.getX())+ abs(p1.getY() - p2.getY());
+    }
+    public static boolean isEqual(Position p1, Position p2) {
+        return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
+    }
+
 }

@@ -25,9 +25,6 @@ public class Board extends Agent {
         GOTrList = new ArrayList<>();
     }
 
-    public Agent getAgentByAID(AID agentAID){
-        return null;
-    }
     public TrAgent getTrByAID(AID trAID){
         for (TrAgent a: TrList){
             if(a.getAID()==trAID){

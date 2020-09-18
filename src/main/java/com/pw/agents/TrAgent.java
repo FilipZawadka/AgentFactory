@@ -5,6 +5,7 @@ import com.pw.behaviours.SendMaterialResponder;
 import com.pw.biddingOntology.*;
 import com.pw.board.Board;
 import com.pw.utils.Distance;
+import com.pw.utils.NeighborPosition;
 import com.pw.utils.Position;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -170,19 +171,68 @@ public class TrAgent extends Agent {
             position.setX(position.getX() + 1);
         }
     }
+    public boolean isPositionFree(Position position){
+        for (GomAgent a: board.GomList){
+            if(Distance.isEqual(a.getPosition(),position)){
+                return true;
+            }
+        }
+        for (TrAgent a: board.TrList){
+            if(Distance.isEqual(a.getPosition(),position)){
+                return false;
+            }
+        }
+        for (GOTr a: board.GOTrList){
+            if(Distance.isEqual(a.getPosition(),position)){
+                return false;
+            }
+        }
+        return true;
+    }
 
     public void goTo(Position dest) {
-        while (position.getX() < dest.getX()) {
-            moveRight();
-        }
-        while (position.getX() > dest.getX()) {
-            moveLeft();
-        }
-        while (position.getY() < dest.getY()) {
-            moveUp();
-        }
-        while (position.getY() > dest.getY()) {
-            moveDown();
+        while(!Distance.isEqual(position,dest)) {
+            boolean blocked = true;
+            while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
+                moveRight();
+                blocked = false;
+            }
+            while (position.getX() > dest.getX() && isPositionFree(NeighborPosition.getLeftPosition(position))) {
+                moveLeft();
+                blocked = false;
+            }
+            while (position.getY() < dest.getY() && isPositionFree(NeighborPosition.getUpPosition(position))) {
+                moveUp();
+                blocked = false;
+            }
+            while (position.getY() > dest.getY() && isPositionFree(NeighborPosition.getDownPosition(position))) {
+                moveDown();
+                blocked = false;
+            }
+            if (blocked){
+                switch((int)(Math.random()*4)){
+                    case 0:
+                        if(isPositionFree(NeighborPosition.getRightPosition(position))){
+                            moveRight();
+                            break;
+                        }
+                    case 1:
+                        if(isPositionFree(NeighborPosition.getLeftPosition(position))){
+                            moveLeft();
+                            break;
+                        }
+                    case 2:
+                        if(isPositionFree(NeighborPosition.getUpPosition(position))){
+                            moveUp();
+                            break;
+                        }
+                    default:
+                        if(isPositionFree(NeighborPosition.getDownPosition(position))){
+                            moveDown();
+                            break;
+                        }
+                }
+            }
         }
     }
 
