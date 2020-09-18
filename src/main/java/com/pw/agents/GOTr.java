@@ -13,12 +13,11 @@ public class GOTr {
     public Board board;
     public Integer TRnum;
 
-    public GOTr(Position position, String _id, Board board, TrAgent firstAgent) {
+    public GOTr(Position position, String _id, Board board, List<TrAgent> agents) {
         this.position = position;
         id = _id;
         this.board = board;
-        trlist = new ArrayList<>();
-        trlist.add(firstAgent);
+        trlist = new ArrayList<>(agents);
         board.GOTrList.add(this);
     }
 

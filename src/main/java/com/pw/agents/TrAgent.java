@@ -107,6 +107,7 @@ public class TrAgent extends Agent {
         }
         if (responders.size() > 0) {
             // initialize cfp
+            // TODO add oneself to the receivers
             for (int i = 0; i < responders.size(); ++i) {
                 if (!responders.get(i).equals(getAID()))
                     cfp.addReceiver(responders.get(i));

@@ -26,12 +26,12 @@ public class SendMaterialResponder extends AchieveREResponder {
         }
         System.out.println("$$$$$$$$$$$$$ TR received message: " + jobRequest);
 
-        ACLMessage bid = new ACLMessage(ACLMessage.CFP);
+        ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
 
         // info from the gom's request
-        ((TrAgent) myAgent).prepareHelpCfp(jobRequest, bid, myAgent);
+        ((TrAgent) myAgent).prepareHelpCfp(jobRequest, cfp, myAgent);
         int trNumber = jobRequest.getTrNumber();
-        myAgent.addBehaviour(new HelpInitiator(myAgent, bid, trNumber));
+        myAgent.addBehaviour(new HelpInitiator(myAgent, cfp, trNumber));
 
         ACLMessage response = request.createReply();
         response.setPerformative(ACLMessage.AGREE);
