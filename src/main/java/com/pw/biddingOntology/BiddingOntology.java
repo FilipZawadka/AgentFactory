@@ -38,6 +38,9 @@ public class BiddingOntology extends Ontology {
     public static final String GOM_JOB_REQUEST_TO = "to";
     public static final String GOM_JOB_REQUEST_MATERIAL = "materialInfo";
 
+    public static final String JOB_INITIAL_POSITION = "jobInitialPosition";
+    public static final String JOB_MESSAGE = "message";
+
     private static Ontology theInstance = new BiddingOntology();
 
     public static Ontology getInstance() {
@@ -55,6 +58,7 @@ public class BiddingOntology extends Ontology {
             add(new AgentActionSchema(GET_HELP), GetHelp.class);
             add(new AgentActionSchema(SEND_RESULT), SendResult.class);
             add(new AgentActionSchema(GOM_JOB_REQUEST), GomJobRequest.class);
+            add(new PredicateSchema(JOB_INITIAL_POSITION), JobInitialPosition.class);
 
             ConceptSchema cs = (ConceptSchema) getSchema(POSITION);
             cs.add(X_POS, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
@@ -86,6 +90,10 @@ public class BiddingOntology extends Ontology {
             as.add(GOM_JOB_REQUEST_FROM, (TermSchema) getSchema(GOM));
             as.add(GOM_JOB_REQUEST_TO, (TermSchema) getSchema(GOM));
             as.add(GOM_JOB_REQUEST_MATERIAL, (TermSchema) getSchema(MATERIAL));
+
+            PredicateSchema p = (PredicateSchema) getSchema(JOB_INITIAL_POSITION);
+            p.add(POSITION, getSchema(POSITION));
+            p.add(JOB_MESSAGE, getSchema(BasicOntology.ACLMSG), ObjectSchema.OPTIONAL);
 
         } catch (OntologyException oe) {
             oe.printStackTrace();

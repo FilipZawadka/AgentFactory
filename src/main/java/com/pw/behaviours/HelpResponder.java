@@ -1,8 +1,11 @@
 
 package com.pw.behaviours;
 
+import com.pw.agents.TrAgent;
 import com.pw.biddingOntology.BiddingOntology;
+import com.pw.biddingOntology.JobInitialPosition;
 import com.pw.biddingOntology.SendResult;
+import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
@@ -55,13 +58,22 @@ public class HelpResponder extends SSContractNetResponder {
 
     @Override
     protected ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) throws FailureException {
-        // go and help
-        // update status
-        // inform about result of the action
-        ACLMessage result = accept.createReply();
-        result.setPerformative(ACLMessage.INFORM);
-        //result.setContent of the information
-        System.out.println("INFORM: " + super.myAgent.getName() + result);
-        return result;
+        // save the job destination in the destinations array
+        ContentElement ce = null;
+        try {
+            ce = myAgent.getContentManager().extractContent(accept);
+        } catch (Codec.CodecException e) {
+            e.printStackTrace();
+        } catch (OntologyException e) {
+            e.printStackTrace();
+        }
+
+        if(ce instanceof JobInitialPosition){
+            JobInitialPosition destination = (JobInitialPosition)ce;
+            destination.setMessage(accept);
+            ((TrAgent)myAgent).addJobPosition(destination);
+        }
+
+        return null;
     }
 }

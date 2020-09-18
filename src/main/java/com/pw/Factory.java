@@ -22,7 +22,7 @@ public class Factory {
             AgentController agentController = container.createNewAgent(GOM(gom.getNumber()), GOM_CLASS_NAME, gomArguments);
             agentController.start();
 
-            Object[] trArguments = {gom.getNumber(), board};
+            Object[] trArguments = {gom.getNumber(), board, gom.getPosition()};
             agentController = container.createNewAgent(TR(gom.getNumber()), TR_CLASS_NAME, trArguments);
             agentController.start();
         }

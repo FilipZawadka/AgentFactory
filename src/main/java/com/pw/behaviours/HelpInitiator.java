@@ -1,6 +1,11 @@
 package com.pw.behaviours;
 
+import com.pw.agents.TrAgent;
+import com.pw.biddingOntology.JobInitialPosition;
+import com.pw.biddingOntology.PositionInfo;
 import com.pw.utils.MessageComparator;
+import jade.content.lang.Codec;
+import jade.content.onto.OntologyException;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.proto.ContractNetInitiator;
@@ -33,6 +38,19 @@ public class HelpInitiator extends ContractNetInitiator {
         for (int i = 0; i < this.trNumber; i++) {
             ACLMessage m = results.get(i).createReply();
             m.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+
+            // send info on where the job takes place
+            try {
+                JobInitialPosition d = new JobInitialPosition();
+                d.setPosition(new PositionInfo(((TrAgent)myAgent).getPosition().getX(), ((TrAgent)myAgent).getPosition().getY()));
+                myAgent.getContentManager().fillContent(m, d);
+            } catch (Codec.CodecException e) {
+                e.printStackTrace();
+            } catch (OntologyException e) {
+                e.printStackTrace();
+            }
+
+
             acceptances.add(m);
             System.out.println("ACCEPT REPLY: " + m);
         }

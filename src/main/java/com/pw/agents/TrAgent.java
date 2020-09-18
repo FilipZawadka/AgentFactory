@@ -38,7 +38,7 @@ public class TrAgent extends Agent implements BoardObject {
     private Board board;
     private Boolean busy;
     private Integer timeOfInactivity;
-    private ArrayList<Position> destinations;
+    private ArrayList<JobInitialPosition> destinations;
 
     @Override
     public void setPosition(Position _position) {
@@ -65,6 +65,7 @@ public class TrAgent extends Agent implements BoardObject {
         Object[] args = getArguments();
         this.id = args[0].toString();
         this.board = (Board) args[1];
+        this.position = (Position) args[2];
 
         // add oneself to the df
         addToDf();
@@ -89,8 +90,8 @@ public class TrAgent extends Agent implements BoardObject {
         destGom.setGomId(new AID("otherGoM", AID.ISLOCALNAME));
 
         GomInfo srcGom = new GomInfo();
-        destGom.setPosition(new PositionInfo(0, 0));
-        destGom.setGomId(new AID("GoM" + this.id, AID.ISLOCALNAME));
+        srcGom.setPosition(new PositionInfo(0, 0));
+        srcGom.setGomId(new AID("GoM" + this.id, AID.ISLOCALNAME));
 
         // get other TRs
         DFAgentDescription template = new DFAgentDescription();
@@ -196,6 +197,13 @@ public class TrAgent extends Agent implements BoardObject {
         }
     }
 
+    public void addJobPosition(JobInitialPosition destination){
+        if(!destinations.contains(destination)){
+            destinations.add(destination);
+            System.out.println("Added: "+destination.toString());
+        }
+    }
+
     private void addGomRespondingAndHelpRequestBehaviors() {
         MessageTemplate mt = MessageTemplate.and(
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
@@ -227,17 +235,29 @@ public class TrAgent extends Agent implements BoardObject {
     }
 
     private void addMovingBehavior() {
-        addBehaviour(new TickerBehaviour(this, 10000) {
+        addBehaviour(new CyclicBehaviour(this) {
             @Override
-            protected void onTick() {
+            public void action() {
                 if (!busy) {
-                    busy = true;
                     if (destinations.size() == 0) {
                         timeOfInactivity++;
                     } else {
+                        busy = true;
                         timeOfInactivity = 0;
-                        goTo(destinations.get(0));
+                        JobInitialPosition destination = destinations.get(0);
+                        Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
+                        goTo(destinationPosition);
+
+                        // info on reached job starting position
+                        ACLMessage result = (destination.getMessage()).createReply();
+                        result.setPerformative(ACLMessage.INFORM);
+                        send(result);
+                        System.out.println("INFORM at "+((TrAgent)myAgent).getPosition().toString()+" : " + super.myAgent.getName() + result);
+
                         destinations.remove(0);
+
+                        // TODO do the carrying of the material and put the busy = false there
+                        busy = false;
                     }
                 }
             }
