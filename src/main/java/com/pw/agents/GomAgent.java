@@ -2,7 +2,7 @@ package com.pw.agents;
 
 import com.pw.behaviours.GomProcessingBehavior;
 import com.pw.biddingOntology.BiddingOntology;
-import com.pw.board.BoardObject;
+import com.pw.board.Board;
 import com.pw.scenerios.GomDefinition;
 import com.pw.utils.Material;
 import com.pw.utils.Position;
@@ -20,20 +20,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.lang.String.format;
 
 @Getter
-public class GomAgent extends Agent implements BoardObject {
+public class GomAgent extends Agent {
     private final Codec codec = new SLCodec();
     private final Ontology onto = BiddingOntology.getInstance();
 
     private final Map<Material, Integer> materials = new ConcurrentHashMap<>();
 
     private GomDefinition definition;
+    private Board board;
 
-    @Override
     protected void setup() {
         super.setup();
 
         Object[] args = getArguments();
         this.definition = (GomDefinition) args[0];
+        this.board = (Board) args[1];
 
         getContentManager().registerLanguage(codec, FIPANames.ContentLanguage.FIPA_SL);
         getContentManager().registerOntology(onto);
@@ -43,19 +44,18 @@ public class GomAgent extends Agent implements BoardObject {
         if (this.definition.isFinal()) {
             addFinalGomBehavior();
         }
+        this.board.GomList.add(this);
     }
 
-    @Override
     public void setPosition(Position position) {
         throw new RuntimeException("GoM's position cannot be changed!");
     }
 
-    @Override
     public Position getPosition() {
         return definition.getPosition();
     }
 
-    @Override
+
     public String getId() {
         return "" + definition.getNumber();
     }

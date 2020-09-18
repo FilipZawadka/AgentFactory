@@ -18,7 +18,7 @@ public class Factory {
         Board board = new Board(scenario.getBoardWidth(), scenario.getBoardHeight());
 
         for (GomDefinition gom : scenario.getGomDefinitions()) {
-            Object[] gomArguments = {gom};
+            Object[] gomArguments = {gom,board};
             AgentController agentController = container.createNewAgent(GOM(gom.getNumber()), GOM_CLASS_NAME, gomArguments);
             agentController.start();
 
