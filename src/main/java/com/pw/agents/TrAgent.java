@@ -4,7 +4,6 @@ import com.pw.behaviours.HelpResponder;
 import com.pw.behaviours.SendMaterialResponder;
 import com.pw.biddingOntology.*;
 import com.pw.board.Board;
-import com.pw.board.BoardObject;
 import com.pw.utils.Distance;
 import com.pw.utils.Position;
 import jade.content.lang.Codec;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 @Getter
-public class TrAgent extends Agent implements BoardObject {
+public class TrAgent extends Agent {
     public Codec codec = new SLCodec();
     public Ontology onto = BiddingOntology.getInstance();
 
@@ -40,22 +39,18 @@ public class TrAgent extends Agent implements BoardObject {
     private Integer timeOfInactivity;
     private ArrayList<JobInitialPosition> destinations;
 
-    @Override
     public void setPosition(Position _position) {
         position = _position;
     }
 
-    @Override
     public Position getPosition() {
         return position;
     }
 
-    @Override
     public String getId() {
         return id;
     }
 
-    @Override
     protected void setup() {
         super.setup();
 
@@ -76,6 +71,17 @@ public class TrAgent extends Agent implements BoardObject {
         addHelpRespondingBehavior();
         addGomRespondingAndHelpRequestBehaviors();
         addDestinationsCheckingBehavior();
+    }
+
+    public double utilityFunction(double deliveryLength,boolean itsMyGom){
+        double inactivityParameter =1;
+        double deliveryLengthParameter=0.5;
+        double loyaltyParameter = 0;
+        if (itsMyGom) {
+            loyaltyParameter = 20;
+        }
+        return ((inactivityParameter * timeOfInactivity) + loyaltyParameter - (deliveryLengthParameter * deliveryLength));
+
     }
 
     public void prepareHelpCfp(GomJobRequest gomRequest, ACLMessage cfp, Agent bidder) {
