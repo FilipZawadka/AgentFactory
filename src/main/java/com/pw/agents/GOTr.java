@@ -1,40 +1,43 @@
 package com.pw.agents;
 
 import com.pw.board.Board;
-import com.pw.board.BoardObject;
 import com.pw.utils.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GOTr implements BoardObject {
+public class GOTr {
     private Position position;
-    private List<BoardObject> trlist;
+    private List<TrAgent> trlist;
     private String id;
     public Board board;
     public Integer TRnum;
 
-    public GOTr(Position position, String _id, Board board, BoardObject firstAgent) {
+    public GOTr(Position position, String _id, Board board, TrAgent firstAgent) {
         this.position = position;
         id = _id;
         this.board = board;
         trlist = new ArrayList<>();
         trlist.add(firstAgent);
+        board.GOTrList.add(this);
     }
 
 
-    @Override
+    public void dispose(){
+        board.GOTrList.remove(this);
+    }
+
     public void setPosition(Position _position) {
         position = _position;
     }
 
-    @Override
+
     public Position getPosition() {
         return position;
 
     }
 
-    @Override
+
     public String getId() {
         return id;
     }
