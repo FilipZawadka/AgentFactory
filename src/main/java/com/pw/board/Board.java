@@ -8,6 +8,7 @@ import jade.core.AID;
 import jade.core.Agent;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Board extends Agent {
@@ -27,7 +28,7 @@ public class Board extends Agent {
 
     public TrAgent getTrByAID(AID trAID){
         for (TrAgent a: TrList){
-            if(a.getAID()==trAID){
+            if(a.getAID().equals(trAID)){
                 return a;
             }
         }
@@ -36,7 +37,7 @@ public class Board extends Agent {
     
     public GomAgent getGomByAID(AID gomAID){
         for (GomAgent a: GomList ){
-            if(a.getAID()==gomAID){
+            if(a.getAID().equals(gomAID)){
                 return a;
             }
         }

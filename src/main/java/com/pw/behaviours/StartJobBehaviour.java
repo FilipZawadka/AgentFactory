@@ -20,6 +20,7 @@ import jade.lang.acl.MessageTemplate;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -60,6 +61,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
 
         this.state = State.RECEIVE_INFORM;
         this.trAgents = new ArrayList<>();
+        this.trAgents.add((TrAgent)myAgent);
     }
 
     @Override
@@ -67,11 +69,10 @@ public class StartJobBehaviour extends SimpleBehaviour {
         ACLMessage inform;
 
         switch(this.state){
-            // TODO the tr doesnt receive all of the informs!
             case RECEIVE_INFORM:
                 inform = myAgent.receive(this.mt);
                 if(inform != null){
-                    trAgents.add((TrAgent)(((TrAgent)myAgent).getBoard().getAgentByAID(inform.getSender())));
+                    trAgents.add(((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender()));
                     if(trAgents.size() == trNumber) {
                         System.out.println("################# RECEIVED ALL INFORMS");
                         this.state = State.CREATE_GOTR;
@@ -81,6 +82,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
             case CREATE_GOTR:
                 // TODO gotr id
                 System.out.println("################# GOTR GO GO GO");
+//                ((TrAgent)myAgent).getBoard().addGOTr(new Position(start), new Position(end), ((TrAgent)myAgent).getId(), trAgents);
                 GOTr gotr = new GOTr(new Position(start), ((TrAgent)myAgent).getId(), ((TrAgent)myAgent).getBoard(), trAgents);
                 gotr.goTo(new Position(end));
                 this.state = State.DONE;

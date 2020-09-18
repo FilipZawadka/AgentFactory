@@ -27,13 +27,14 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.pw.utils.Naming.GOM;
+
 @Getter
 public class TrAgent extends Agent {
     public Codec codec = new SLCodec();
     public Ontology onto = BiddingOntology.getInstance();
 
     private String id;
-    private GomAgent myGom;
     private Position position;
     private Board board;
     private Boolean busy;
@@ -63,7 +64,7 @@ public class TrAgent extends Agent {
         this.board = (Board) args[1];
         this.position = (Position) args[2];
 
-        // add oneself to the df
+        this.board.TrList.add(this);
         addToDf();
 
         getContentManager().registerLanguage(codec, FIPANames.ContentLanguage.FIPA_SL);
@@ -145,6 +146,14 @@ public class TrAgent extends Agent {
         int weight = gomRequest.getMaterialInfo().getWeight();
 
         return (int)(distance * weight);
+    }
+
+    public void lock(){
+        this.busy = true;
+    }
+
+    public void release(){
+        this.busy = false;
     }
 
     public void moveUp() {
@@ -253,7 +262,7 @@ public class TrAgent extends Agent {
     public void addJobPosition(JobInitialPosition destination){
         if(!destinations.contains(destination)){
             destinations.add(destination);
-            System.out.println("Added: "+destination.toString());
+            System.out.println("Added: "+destination.getPosition().toString());
         }
     }
 
@@ -262,7 +271,9 @@ public class TrAgent extends Agent {
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
                 MessageTemplate.and(
                         MessageTemplate.MatchOntology(onto.getName()),
-                        MessageTemplate.MatchLanguage(codec.getName())));
+                        MessageTemplate.and(
+                                MessageTemplate.MatchSender(new AID(GOM(Integer.parseInt(this.id)), AID.ISLOCALNAME)),
+                        MessageTemplate.MatchLanguage(codec.getName()))));
 
         addBehaviour(new SendMaterialResponder(this, mt));
     }
@@ -295,10 +306,11 @@ public class TrAgent extends Agent {
                     if (destinations.size() == 0) {
                         timeOfInactivity++;
                     } else {
-                        busy = true;
+                        lock();
                         timeOfInactivity = 0;
                         JobInitialPosition destination = destinations.get(0);
                         Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
+                        System.out.println("===================TAKE DESTINATION "+getLocalName()+" "+destinationPosition.toString());
                         goTo(destinationPosition);
 
                         // info on reached job starting position
@@ -308,9 +320,6 @@ public class TrAgent extends Agent {
                         System.out.println("INFORM at "+((TrAgent)myAgent).getPosition().toString()+" : " + super.myAgent.getName() + result);
 
                         destinations.remove(0);
-
-                        // TODO do the carrying of the material and put the busy = false there
-                        busy = false;
                     }
                 }
             }

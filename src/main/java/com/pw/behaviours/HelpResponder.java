@@ -43,8 +43,6 @@ public class HelpResponder extends SSContractNetResponder {
         if(ce instanceof Action && ((Action)ce).getAction() instanceof GetHelp){
             help = (GetHelp)((Action)ce).getAction();
             cfpContent = help.getCallForProposal();
-
-
         }
         else{
             throw new Exception("ce is not Action or not Gethelp");

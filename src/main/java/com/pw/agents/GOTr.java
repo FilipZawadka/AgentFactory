@@ -52,6 +52,12 @@ public class GOTr {
         return id;
     }
 
+    private void releaseTrs(){
+        for(TrAgent a : trlist){
+            a.release();
+        }
+    }
+
     private void updateTRs() {
         for (int i = 0; i < trlist.size(); i++) {
             trlist.get(i).setPosition(position);
@@ -126,31 +132,33 @@ public class GOTr {
                 moveDown();
                 blocked = false;
             }
-            if (blocked){
-                switch((int)(Math.random()*4)){
+            if (blocked) {
+                switch ((int) (Math.random() * 4)) {
                     case 0:
-                        if(isPositionFree(NeighborPosition.getRightPosition(position))){
+                        if (isPositionFree(NeighborPosition.getRightPosition(position))) {
                             moveRight();
                             break;
                         }
                     case 1:
-                        if(isPositionFree(NeighborPosition.getLeftPosition(position))){
+                        if (isPositionFree(NeighborPosition.getLeftPosition(position))) {
                             moveLeft();
                             break;
                         }
                     case 2:
-                        if(isPositionFree(NeighborPosition.getUpPosition(position))){
+                        if (isPositionFree(NeighborPosition.getUpPosition(position))) {
                             moveUp();
                             break;
                         }
                     default:
-                        if(isPositionFree(NeighborPosition.getDownPosition(position))){
+                        if (isPositionFree(NeighborPosition.getDownPosition(position))) {
                             moveDown();
                             break;
                         }
                 }
             }
         }
+        releaseTrs();
         dispose();
     }
 }
+
