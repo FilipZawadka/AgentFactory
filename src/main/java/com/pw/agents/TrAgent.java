@@ -5,6 +5,7 @@ import com.pw.behaviours.SendMaterialResponder;
 import com.pw.biddingOntology.*;
 import com.pw.board.Board;
 import com.pw.board.BoardObject;
+import com.pw.utils.Distance;
 import com.pw.utils.Position;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -14,7 +15,6 @@ import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -75,23 +75,14 @@ public class TrAgent extends Agent implements BoardObject {
 
         addHelpRespondingBehavior();
         addGomRespondingAndHelpRequestBehaviors();
-        addMovingBehavior();
+        addDestinationsCheckingBehavior();
     }
 
-    public int prepareHelpCfp(ACLMessage gomRequest, ACLMessage bid, Agent bidder) {
+    public void prepareHelpCfp(GomJobRequest gomRequest, ACLMessage cfp, Agent bidder) {
         ArrayList<AID> responders = new ArrayList<>();
 
-        // to be retrieved from the gomRequest
-        int trNumber = 2;
-        int tokens = 10;
-
-        GomInfo destGom = new GomInfo();
-        destGom.setPosition(new PositionInfo(1, 1));
-        destGom.setGomId(new AID("otherGoM", AID.ISLOCALNAME));
-
-        GomInfo srcGom = new GomInfo();
-        srcGom.setPosition(new PositionInfo(0, 0));
-        srcGom.setGomId(new AID("GoM" + this.id, AID.ISLOCALNAME));
+        CallForProposal cfpContent = new CallForProposal();
+        fillCfpFromGomRequest(cfpContent, gomRequest);
 
         // get other TRs
         DFAgentDescription template = new DFAgentDescription();
@@ -112,35 +103,40 @@ public class TrAgent extends Agent implements BoardObject {
             // initialize cfp
             for (int i = 0; i < responders.size(); ++i) {
                 if (!responders.get(i).equals(getAID()))
-                    bid.addReceiver(responders.get(i));
+                    cfp.addReceiver(responders.get(i));
             }
 
-            bid.setOntology(onto.getName());
-            bid.setLanguage(codec.getName());
+            cfp.setOntology(onto.getName());
+            cfp.setLanguage(codec.getName());
 
             GetHelp gh = new GetHelp();
-            Proposal prop = new Proposal();
-
-            // to be retrieved from the gomRequest
-            prop.setSrcGom(srcGom);
-            prop.setDestGom(destGom);
-            prop.setProposalId(new Random().nextInt());
-            prop.setTrNumber(trNumber);
-            prop.setTokens(tokens);
-            gh.setProposal(prop);
+            gh.setCallForProposal(cfpContent);
 
             Action a = new Action(getAID(), gh);
             try {
-                getContentManager().fillContent(bid, a);
+                getContentManager().fillContent(cfp, a);
             } catch (Codec.CodecException ce) {
                 ce.printStackTrace();
             } catch (OntologyException oe) {
                 oe.printStackTrace();
             }
-            System.out.println(bid);
+            System.out.println(cfp);
         }
+    }
 
-        return trNumber;
+    private void fillCfpFromGomRequest(CallForProposal cfpContent, GomJobRequest gomRequest) {
+        cfpContent.setSrcGom(gomRequest.getFrom());
+        cfpContent.setDestGom(gomRequest.getTo());
+        cfpContent.setProposalId(new Random().nextInt());
+        cfpContent.setTrNumber(gomRequest.getTrNumber());
+        cfpContent.setTokens(calculateTokensForRequest(gomRequest));
+    }
+
+    private Integer calculateTokensForRequest(GomJobRequest gomRequest) {
+        double distance = Distance.euclidean(gomRequest.getFrom().getPosition(), gomRequest.getTo().getPosition());
+        int weight = gomRequest.getMaterialInfo().getWeight();
+
+        return (int)(distance * weight);
     }
 
     public void moveUp() {
@@ -234,7 +230,7 @@ public class TrAgent extends Agent implements BoardObject {
         });
     }
 
-    private void addMovingBehavior() {
+    private void addDestinationsCheckingBehavior() {
         addBehaviour(new CyclicBehaviour(this) {
             @Override
             public void action() {

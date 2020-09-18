@@ -10,7 +10,7 @@ public class BiddingOntology extends Ontology {
 
     public static final String GET_HELP = "GetHelp";
 
-    public static final String PROPOSAL = "Proposal";
+    public static final String CALL_FOR_PROPOSAL = "callForProposal";
     public static final String PROPOSAL_ID = "proposalId";
     public static final String NUMBER = "trNumber";
 
@@ -23,7 +23,7 @@ public class BiddingOntology extends Ontology {
 
     public static final String MATERIAL = "Material";
     public static final String MATERIAL_NAME = "name";
-    public static final String MATERIAL_AMOUNT = "amount";
+//    public static final String MATERIAL_AMOUNT = "amount";
     public static final String MATERIAL_WEIGHT = "weight";
 
     public static final String DESTINATION = "destGom";
@@ -52,7 +52,7 @@ public class BiddingOntology extends Ontology {
 
         try {
             add(new ConceptSchema(POSITION), PositionInfo.class);
-            add(new ConceptSchema(PROPOSAL), Proposal.class);
+            add(new ConceptSchema(CALL_FOR_PROPOSAL), CallForProposal.class);
             add(new ConceptSchema(GOM), GomInfo.class);
             add(new ConceptSchema(MATERIAL), MaterialInfo.class);
             add(new AgentActionSchema(GET_HELP), GetHelp.class);
@@ -68,7 +68,7 @@ public class BiddingOntology extends Ontology {
             cs.add(GOM_ID, (TermSchema) getSchema(BasicOntology.AID));
             cs.add(POSITION, (TermSchema) getSchema(POSITION));
 
-            cs = (ConceptSchema) getSchema(PROPOSAL);
+            cs = (ConceptSchema) getSchema(CALL_FOR_PROPOSAL);
             cs.add(PROPOSAL_ID, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
             cs.add(NUMBER, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
             cs.add(DESTINATION, (TermSchema) getSchema(GOM));
@@ -77,11 +77,11 @@ public class BiddingOntology extends Ontology {
 
             cs = (ConceptSchema) getSchema(MATERIAL);
             cs.add(MATERIAL_NAME, (PrimitiveSchema) getSchema(BasicOntology.STRING));
-            cs.add(MATERIAL_AMOUNT, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
+//            cs.add(MATERIAL_AMOUNT, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
             cs.add(MATERIAL_WEIGHT, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
 
             AgentActionSchema as = (AgentActionSchema) getSchema(GET_HELP);
-            as.add(PROPOSAL, (ConceptSchema) getSchema(PROPOSAL));
+            as.add(CALL_FOR_PROPOSAL, (ConceptSchema) getSchema(CALL_FOR_PROPOSAL));
 
             as = (AgentActionSchema) getSchema(SEND_RESULT);
             as.add(RESULT, (PrimitiveSchema) getSchema(BasicOntology.FLOAT));

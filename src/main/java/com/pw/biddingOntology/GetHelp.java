@@ -1,15 +1,13 @@
 package com.pw.biddingOntology;
 
 import jade.content.AgentAction;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class GetHelp implements AgentAction {
-    private Proposal proposal;
-
-    public Proposal getProposal() {
-        return proposal;
-    }
-
-    public void setProposal(Proposal proposal) {
-        this.proposal = proposal;
-    }
+    private CallForProposal callForProposal;
 }

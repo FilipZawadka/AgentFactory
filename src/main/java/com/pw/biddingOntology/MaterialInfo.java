@@ -10,6 +10,7 @@ import lombok.*;
 @ToString
 public class MaterialInfo implements Concept {
     private String name;
-    private Integer amount;
+//    we carry only one material at a time
+//    private Integer amount;
     private Integer weight;
 }

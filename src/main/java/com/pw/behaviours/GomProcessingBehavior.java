@@ -56,11 +56,11 @@ public class GomProcessingBehavior extends TickerBehaviour {
         //TODO: May want to add some processing delay later..
         // ..
 
-        sendJobToTR(process.getOutputMaterial(), process.getOutputMaterialAmount(), process.getDestination());
+        sendJobToTR(process.getOutputMaterial(), process.getDestination());
     }
 
-    private void sendJobToTR(Material material, Integer amount, GomDefinition destination) {
-        ACLMessage request = createJobRequestToTR(material, amount, destination);
+    private void sendJobToTR(Material material, GomDefinition destination) {
+        ACLMessage request = createJobRequestToTR(material, destination);
 
         myAgent.addBehaviour(new AchieveREInitiator(myAgent, request) {
             @Override
@@ -75,14 +75,14 @@ public class GomProcessingBehavior extends TickerBehaviour {
     }
 
     @SneakyThrows
-    private ACLMessage createJobRequestToTR(Material material, Integer amount, GomDefinition destination) {
+    private ACLMessage createJobRequestToTR(Material material, GomDefinition destination) {
         GomAgent agent = (GomAgent) myAgent;
 
         GomInfo from = new GomInfo(new AID(GOM(agent.getDefinition().getNumber()), AID.ISLOCALNAME),
             new PositionInfo(agent.getPosition()));
         GomInfo to = new GomInfo(new AID(GOM(destination.getNumber()), AID.ISLOCALNAME),
             new PositionInfo(destination.getPosition()));
-        MaterialInfo materialInfo = new MaterialInfo(material.getName(), amount, material.getWeight());
+        MaterialInfo materialInfo = new MaterialInfo(material.getName(), material.getWeight());
         GomJobRequest jobRequest = new GomJobRequest(from, to, materialInfo);
 
         ACLMessage request = new ACLMessage(ACLMessage.REQUEST);

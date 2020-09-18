@@ -12,4 +12,8 @@ public class GomJobRequest implements AgentAction {
     private GomInfo from;
     private GomInfo to;
     private MaterialInfo materialInfo;
+
+    public int getTrNumber(){
+        return this.materialInfo.getWeight();
+    }
 }
