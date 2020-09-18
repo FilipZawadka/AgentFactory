@@ -2,9 +2,8 @@
 package com.pw.behaviours;
 
 import com.pw.agents.TrAgent;
-import com.pw.biddingOntology.BiddingOntology;
-import com.pw.biddingOntology.JobInitialPosition;
-import com.pw.biddingOntology.SendResult;
+import com.pw.biddingOntology.*;
+import com.pw.utils.Distance;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -17,8 +16,11 @@ import jade.domain.FIPAAgentManagement.NotUnderstoodException;
 import jade.domain.FIPAAgentManagement.RefuseException;
 import jade.lang.acl.ACLMessage;
 import jade.proto.SSContractNetResponder;
+import lombok.SneakyThrows;
 
 import java.util.Random;
+
+import static java.lang.Math.abs;
 
 public class HelpResponder extends SSContractNetResponder {
     private Codec codec = new SLCodec();
@@ -28,14 +30,28 @@ public class HelpResponder extends SSContractNetResponder {
         super(a, cfp);
     }
 
+    @SneakyThrows
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
         ACLMessage reply = cfp.createReply();
         //process the content
         reply.setPerformative(ACLMessage.PROPOSE);
         //calculate the UTILITY
-        float utility = new Random().nextFloat();
+        ContentElement ce = myAgent.getContentManager().extractContent(cfp);
+        GetHelp help;
+        CallForProposal cfpContent;
+        if(ce instanceof Action && ((Action)ce).getAction() instanceof GetHelp){
+            help = (GetHelp)((Action)ce).getAction();
+            cfpContent = help.getCallForProposal();
 
+
+        }
+        else{
+            throw new Exception("ce is not Action or not Gethelp");
+        }
+
+        float taskDistance = Distance.absolute(cfpContent.getDestGom().getPosition(),cfpContent.getSrcGom().getPosition());
+        float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,false);
         reply.setOntology(onto.getName());
         reply.setLanguage(codec.getName());
 
@@ -45,10 +61,10 @@ public class HelpResponder extends SSContractNetResponder {
         Action a = new Action(super.myAgent.getAID(), sr);
         try {
             super.myAgent.getContentManager().fillContent(reply, a);
-        } catch (Codec.CodecException ce) {
-            ce.printStackTrace();
-        } catch (OntologyException oe) {
-            oe.printStackTrace();
+        } catch (Codec.CodecException cex) {
+            cex.printStackTrace();
+        } catch (OntologyException oex) {
+            oex.printStackTrace();
         }
 
         System.out.println("REPLY: " + reply);

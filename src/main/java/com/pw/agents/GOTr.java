@@ -2,6 +2,7 @@ package com.pw.agents;
 
 import com.pw.board.Board;
 import com.pw.utils.Position;
+import jade.core.AID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,14 @@ public class GOTr {
         board.GOTrList.add(this);
     }
 
+    public TrAgent getTrByAID(AID trAID){
+        for (TrAgent a: trlist){
+            if(a.getAID()==trAID){
+                return a;
+            }
+        }
+        return null;
+    }
 
     public void dispose(){
         board.GOTrList.remove(this);
@@ -90,5 +99,6 @@ public class GOTr {
         while (position.getY() > dest.getY()) {
             moveDown();
         }
+        dispose();
     }
 }

@@ -13,6 +13,7 @@ import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +28,7 @@ public class GomAgent extends Agent {
     private final Map<Material, Integer> materials = new ConcurrentHashMap<>();
 
     private GomDefinition definition;
-    private Board board;
+    public Board board;
 
     protected void setup() {
         super.setup();

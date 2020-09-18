@@ -28,4 +28,22 @@ public class Board extends Agent {
     public Agent getAgentByAID(AID agentAID){
         return null;
     }
+    public TrAgent getTrByAID(AID trAID){
+        for (TrAgent a: TrList){
+            if(a.getAID()==trAID){
+                return a;
+            }
+        }
+        return null;
+    }
+    
+    public GomAgent getGomByAID(AID gomAID){
+        for (GomAgent a: GomList ){
+            if(a.getAID()==gomAID){
+                return a;
+            }
+        }
+        return null;
+    }
+
 }

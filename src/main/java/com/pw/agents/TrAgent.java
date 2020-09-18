@@ -73,10 +73,10 @@ public class TrAgent extends Agent {
         addDestinationsCheckingBehavior();
     }
 
-    public double utilityFunction(double deliveryLength,boolean itsMyGom){
-        double inactivityParameter =1;
-        double deliveryLengthParameter=0.5;
-        double loyaltyParameter = 0;
+    public float utilityFunction(float deliveryLength,boolean itsMyGom){
+        float inactivityParameter =1;
+        float deliveryLengthParameter = 0.5f;
+        float loyaltyParameter = 0;
         if (itsMyGom) {
             loyaltyParameter = 20;
         }
