@@ -97,10 +97,4 @@ public class HelpResponder extends SSContractNetResponder {
 
         return null;
     }
-
-
-    @Override
-    protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        super.handleRejectProposal(cfp, propose, reject);
-    }
 }
