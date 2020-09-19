@@ -20,6 +20,7 @@ import jade.lang.acl.MessageTemplate;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -39,10 +40,10 @@ public class StartJobBehaviour extends SimpleBehaviour {
     @SneakyThrows
     public StartJobBehaviour(Agent a, String conversation_id, ACLMessage cfp) {
         super(a);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@ START CFP: " + cfp);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@ START GOTRING");
 
         this.mt = MessageTemplate.and(
-                MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+                MessageTemplate.MatchPerformative(ACLMessage.INFORM_IF),
                 MessageTemplate.and(
                         MessageTemplate.MatchOntology(onto.getName()),
                         MessageTemplate.and(
@@ -60,32 +61,44 @@ public class StartJobBehaviour extends SimpleBehaviour {
 
         this.state = State.RECEIVE_INFORM;
         this.trAgents = new ArrayList<>();
+//        this.trAgents.add((TrAgent)myAgent);
     }
 
     @Override
     public void action() {
         ACLMessage inform;
+//        System.out.println(this.state);
 
         switch(this.state){
-            // TODO the tr doesnt receive all of the informs!
             case RECEIVE_INFORM:
                 inform = myAgent.receive(this.mt);
                 if(inform != null){
+<<<<<<< HEAD
                     trAgents.add((TrAgent)(((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender())));
+=======
+                    TrAgent tr = ((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender());
+                    System.out.println(myAgent.getLocalName()+" Received, inform from: "+tr.getLocalName());
+                    if(!trAgents.contains(tr))
+                        trAgents.add(tr);
+>>>>>>> 24b71bcc221d43e00afb059efa8967b1f4e3a2c8
                     if(trAgents.size() == trNumber) {
                         System.out.println("################# RECEIVED ALL INFORMS");
                         this.state = State.CREATE_GOTR;
                     }
                 }
+                else{
+                    block();
+                }
                 break;
             case CREATE_GOTR:
                 // TODO gotr id
                 System.out.println("################# GOTR GO GO GO");
+//                ((TrAgent)myAgent).getBoard().addGOTr(new Position(start), new Position(end), ((TrAgent)myAgent).getId(), trAgents);
                 GOTr gotr = new GOTr(new Position(start), ((TrAgent)myAgent).getId(), ((TrAgent)myAgent).getBoard(), trAgents);
                 gotr.goTo(new Position(end));
                 this.state = State.DONE;
                 break;
-            default:
+            case DONE:
                 break;
         }
     }
