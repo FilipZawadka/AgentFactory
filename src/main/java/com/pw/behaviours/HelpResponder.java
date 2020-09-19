@@ -43,8 +43,6 @@ public class HelpResponder extends SSContractNetResponder {
         if(ce instanceof Action && ((Action)ce).getAction() instanceof GetHelp){
             help = (GetHelp)((Action)ce).getAction();
             cfpContent = help.getCallForProposal();
-
-
         }
         else{
             throw new Exception("ce is not Action or not Gethelp");
@@ -67,7 +65,7 @@ public class HelpResponder extends SSContractNetResponder {
             oex.printStackTrace();
         }
 
-        System.out.println("REPLY: " + reply);
+        System.out.println("REPLY FROM "+myAgent.getLocalName());
 
         return reply;
     }
@@ -86,10 +84,23 @@ public class HelpResponder extends SSContractNetResponder {
 
         if(ce instanceof JobInitialPosition){
             JobInitialPosition destination = (JobInitialPosition)ce;
-            destination.setMessage(accept);
+            destination.setSender(accept.getSender());
+            destination.setConversation(accept.getConversationId());
             ((TrAgent)myAgent).addJobPosition(destination);
+
+            ACLMessage result = accept.createReply();
+            result.setPerformative(ACLMessage.INFORM);
+            result.setConversationId(destination.getConversation());
+            result.setOntology(onto.getName());
+            return result;
         }
 
         return null;
+    }
+
+
+    @Override
+    protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
+        super.handleRejectProposal(cfp, propose, reject);
     }
 }

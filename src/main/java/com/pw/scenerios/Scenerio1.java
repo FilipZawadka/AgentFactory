@@ -22,7 +22,7 @@ public class Scenerio1 extends Scenario {
             MaterialGenerator.builder()
                 .material(m1)
                 .amount(1)
-                .interval(1000)
+                .interval(5000)
                 .build());
         GomDefinition gom1 = new GomDefinition(new Position(6, 2));
         GomDefinition gom2 = new GomDefinition(new Position(6, 14));

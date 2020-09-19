@@ -4,13 +4,10 @@ import com.pw.GUI;
 import com.pw.agents.GOTr;
 import com.pw.agents.GomAgent;
 import com.pw.agents.TrAgent;
-import com.pw.utils.Position;
 import jade.core.AID;
 import jade.core.Agent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
 public class Board extends Agent {
     public ArrayList<TrAgent> TrList;
@@ -32,7 +29,7 @@ public class Board extends Agent {
 
     public TrAgent getTrByAID(AID trAID){
         for (TrAgent a: TrList){
-            if(a.getAID()==trAID){
+            if(a.getAID().equals(trAID)){
                 return a;
             }
         }
@@ -41,7 +38,7 @@ public class Board extends Agent {
     
     public GomAgent getGomByAID(AID gomAID){
         for (GomAgent a: GomList ){
-            if(a.getAID()==gomAID){
+            if(a.getAID().equals(gomAID)){
                 return a;
             }
         }
