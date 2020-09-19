@@ -8,11 +8,6 @@ import jade.core.AID;
 import jade.core.Agent;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-import java.util.Arrays;
-import java.util.Map;
-=======
->>>>>>> 24b71bcc221d43e00afb059efa8967b1f4e3a2c8
 
 public class Board extends Agent {
     public ArrayList<TrAgent> TrList;
