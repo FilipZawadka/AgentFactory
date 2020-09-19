@@ -23,6 +23,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -42,8 +43,10 @@ public class TrAgent extends Agent {
     private Integer timeOfInactivity;
     private ArrayList<JobInitialPosition> destinations;
 
+    @SneakyThrows
     public void setPosition(Position _position) {
         position = _position;
+        Thread.sleep(100);
         board.updateGUI();
     }
 
