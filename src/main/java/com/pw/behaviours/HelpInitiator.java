@@ -31,13 +31,11 @@ public class HelpInitiator extends ContractNetInitiator {
     public HelpInitiator(Agent a, ACLMessage cfp, int _trNumber) {
         super(a, cfp);
         this.trNumber = _trNumber;
-        String conv = cfp.getConversationId();
-//        a.addBehaviour(new StartJobBehaviour(myAgent, conv, cfp));
     }
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        System.out.println("%%%%%%%%%%%%%%%%%%% "+inform);
+        super.handleInform(inform);
     }
 
     @Override

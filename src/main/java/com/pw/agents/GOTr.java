@@ -26,7 +26,7 @@ public class GOTr {
 
     public TrAgent getTrByAID(AID trAID){
         for (TrAgent a: trlist){
-            if(a.getAID()==trAID){
+            if(a.getAID().equals(trAID)){
                 return a;
             }
         }

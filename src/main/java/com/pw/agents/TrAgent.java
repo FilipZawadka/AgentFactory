@@ -268,15 +268,6 @@ public class TrAgent extends Agent {
         }
     }
 
-    public boolean destinationReached(JobInitialPosition destination){
-        if(destinations.contains(destination))
-            return false;
-        else {
-            System.out.println("REACHED");
-            return true;
-        }
-    }
-
     private void addGomRespondingAndHelpRequestBehaviors() {
         MessageTemplate mt = MessageTemplate.and(
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST),

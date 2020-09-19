@@ -92,7 +92,6 @@ public class HelpResponder extends SSContractNetResponder {
             result.setPerformative(ACLMessage.INFORM);
             result.setConversationId(destination.getConversation());
             result.setOntology(onto.getName());
-//            System.out.println("INFORM at "+((TrAgent)myAgent).getPosition().toString()+" : " + super.myAgent.getName()+result);
             return result;
         }
 
