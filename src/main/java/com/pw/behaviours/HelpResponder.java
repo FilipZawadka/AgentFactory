@@ -65,7 +65,7 @@ public class HelpResponder extends SSContractNetResponder {
             oex.printStackTrace();
         }
 
-        System.out.println("REPLY: " + reply);
+        System.out.println("REPLY FROM "+myAgent.getLocalName());
 
         return reply;
     }
@@ -84,10 +84,12 @@ public class HelpResponder extends SSContractNetResponder {
 
         if(ce instanceof JobInitialPosition){
             JobInitialPosition destination = (JobInitialPosition)ce;
-            destination.setMessage(accept);
+            destination.setSender(accept.getSender());
+            destination.setConversation(accept.getConversationId());
             ((TrAgent)myAgent).addJobPosition(destination);
         }
 
         return null;
     }
+
 }

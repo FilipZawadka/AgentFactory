@@ -1,6 +1,7 @@
 package com.pw.biddingOntology;
 
 import jade.content.Predicate;
+import jade.core.AID;
 import jade.lang.acl.ACLMessage;
 import lombok.*;
 
@@ -13,5 +14,6 @@ public class JobInitialPosition implements Predicate {
     // starting position of the job
     private PositionInfo position;
     // message to reply to when the initial position is reached
-    private ACLMessage message;
+    private AID sender;
+    private String conversation;
 }

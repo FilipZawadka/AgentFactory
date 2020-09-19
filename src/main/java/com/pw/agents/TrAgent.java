@@ -129,7 +129,7 @@ public class TrAgent extends Agent {
             } catch (OntologyException oe) {
                 oe.printStackTrace();
             }
-            System.out.println(cfp);
+            System.out.println("CFP FROM "+getLocalName());
         }
     }
 
@@ -262,7 +262,7 @@ public class TrAgent extends Agent {
     public void addJobPosition(JobInitialPosition destination){
         if(!destinations.contains(destination)){
             destinations.add(destination);
-            System.out.println("Added: "+destination.getPosition().toString());
+            System.out.println(getLocalName()+" ADDED TO DESTINATIONS: "+destination.getPosition().toString());
         }
     }
 
@@ -310,14 +310,17 @@ public class TrAgent extends Agent {
                         timeOfInactivity = 0;
                         JobInitialPosition destination = destinations.get(0);
                         Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
-                        System.out.println("===================TAKE DESTINATION "+getLocalName()+" "+destinationPosition.toString());
+                        System.out.println(getLocalName()+" GO TO DESTINATION "+" "+destinationPosition.toString());
                         goTo(destinationPosition);
 
                         // info on reached job starting position
-                        ACLMessage result = (destination.getMessage()).createReply();
-                        result.setPerformative(ACLMessage.INFORM);
+                        ACLMessage result = new ACLMessage(ACLMessage.INFORM);
+                        result.addReceiver(destination.getSender());
+                        result.setConversationId(destination.getConversation());
+                        result.setOntology(onto.getName());
+                        result.setLanguage(codec.getName());
                         send(result);
-                        System.out.println("INFORM at "+((TrAgent)myAgent).getPosition().toString()+" : " + super.myAgent.getName() + result);
+                        System.out.println("INFORM at "+((TrAgent)myAgent).getPosition().toString()+" : " + super.myAgent.getName()+result);
 
                         destinations.remove(0);
                     }

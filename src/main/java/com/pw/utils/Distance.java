@@ -22,7 +22,7 @@ public class Distance {
         return abs(p1.getX() - p2.getX())+ abs(p1.getY() - p2.getY());
     }
     public static boolean isEqual(Position p1, Position p2) {
-        return (p1.getX() == p2.getX() && p1.getY() == p2.getY());
+        return (p1.getX().equals(p2.getX()) && p1.getY().equals(p2.getY()));
     }
 
 }

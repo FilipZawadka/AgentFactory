@@ -30,7 +30,6 @@ public class HelpInitiator extends ContractNetInitiator {
     @SneakyThrows
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
-        System.out.println("HANDLE RESPONSES");
         java.util.ArrayList<ACLMessage> results = new java.util.ArrayList<>();
         // process all the utility function results
         for (Object proposal : responses) {
@@ -38,6 +37,7 @@ public class HelpInitiator extends ContractNetInitiator {
                 results.add((ACLMessage) proposal);
             }
         }
+
         MessageComparator comparator = new MessageComparator();
         Collections.sort(results, comparator);
 
@@ -67,7 +67,7 @@ public class HelpInitiator extends ContractNetInitiator {
                 }
 
                 acceptances.add(m);
-                System.out.println("ACCEPT REPLY: " + m);
+                System.out.println("ACCEPT REPLY FROM "+myAgent.getLocalName());
             }
         }
     }

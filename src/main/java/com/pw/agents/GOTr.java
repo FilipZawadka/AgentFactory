@@ -44,7 +44,6 @@ public class GOTr {
 
     public Position getPosition() {
         return position;
-
     }
 
 
@@ -118,18 +117,22 @@ public class GOTr {
             boolean blocked = true;
             while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
                 moveRight();
+                System.out.println(position);
                 blocked = false;
             }
             while (position.getX() > dest.getX() && isPositionFree(NeighborPosition.getLeftPosition(position))) {
                 moveLeft();
+                System.out.println(position);
                 blocked = false;
             }
             while (position.getY() < dest.getY() && isPositionFree(NeighborPosition.getUpPosition(position))) {
                 moveUp();
+                System.out.println(position);
                 blocked = false;
             }
             while (position.getY() > dest.getY() && isPositionFree(NeighborPosition.getDownPosition(position))) {
                 moveDown();
+                System.out.println(position);
                 blocked = false;
             }
             if (blocked) {
@@ -137,21 +140,25 @@ public class GOTr {
                     case 0:
                         if (isPositionFree(NeighborPosition.getRightPosition(position))) {
                             moveRight();
+                            System.out.println(position);
                             break;
                         }
                     case 1:
                         if (isPositionFree(NeighborPosition.getLeftPosition(position))) {
                             moveLeft();
+                            System.out.println(position);
                             break;
                         }
                     case 2:
                         if (isPositionFree(NeighborPosition.getUpPosition(position))) {
                             moveUp();
+                            System.out.println(position);
                             break;
                         }
                     default:
                         if (isPositionFree(NeighborPosition.getDownPosition(position))) {
                             moveDown();
+                            System.out.println(position);
                             break;
                         }
                 }

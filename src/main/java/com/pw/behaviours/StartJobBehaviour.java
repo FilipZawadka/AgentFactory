@@ -40,7 +40,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
     @SneakyThrows
     public StartJobBehaviour(Agent a, String conversation_id, ACLMessage cfp) {
         super(a);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@ START CFP: " + cfp);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@ START GOTRING");
 
         this.mt = MessageTemplate.and(
                 MessageTemplate.MatchPerformative(ACLMessage.INFORM),
@@ -61,22 +61,29 @@ public class StartJobBehaviour extends SimpleBehaviour {
 
         this.state = State.RECEIVE_INFORM;
         this.trAgents = new ArrayList<>();
-        this.trAgents.add((TrAgent)myAgent);
+//        this.trAgents.add((TrAgent)myAgent);
     }
 
     @Override
     public void action() {
         ACLMessage inform;
+        System.out.println(this.state);
 
         switch(this.state){
             case RECEIVE_INFORM:
                 inform = myAgent.receive(this.mt);
                 if(inform != null){
-                    trAgents.add(((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender()));
+                    TrAgent tr = ((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender());
+                    System.out.println(myAgent.getLocalName()+" Received inform from: "+tr.getLocalName());
+                    if(!trAgents.contains(tr))
+                        trAgents.add(tr);
                     if(trAgents.size() == trNumber) {
                         System.out.println("################# RECEIVED ALL INFORMS");
                         this.state = State.CREATE_GOTR;
                     }
+                }
+                else{
+                    block();
                 }
                 break;
             case CREATE_GOTR:
@@ -87,7 +94,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
                 gotr.goTo(new Position(end));
                 this.state = State.DONE;
                 break;
-            default:
+            case DONE:
                 break;
         }
     }
