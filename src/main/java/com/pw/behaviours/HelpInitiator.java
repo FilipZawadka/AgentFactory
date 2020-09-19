@@ -2,9 +2,8 @@ package com.pw.behaviours;
 
 import com.pw.agents.GOTr;
 import com.pw.agents.TrAgent;
-import com.pw.biddingOntology.GetHelp;
-import com.pw.biddingOntology.JobInitialPosition;
-import com.pw.biddingOntology.PositionInfo;
+import com.pw.biddingOntology.*;
+import com.pw.utils.Distance;
 import com.pw.utils.MessageComparator;
 import com.pw.utils.Position;
 import jade.content.ContentElement;
@@ -35,12 +34,13 @@ public class HelpInitiator extends ContractNetInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        super.handleInform(inform);
+        if(inform.getPerformative() == ACLMessage.INFORM_IF)
+            myAgent.putBack(inform);
     }
 
     @Override
     protected void handleOutOfSequence(ACLMessage msg) {
-        if(msg.getPerformative() == ACLMessage.INFORM_IF)
+        if (msg.getPerformative() == ACLMessage.INFORM_IF)
             myAgent.putBack(msg);
     }
 
@@ -55,43 +55,82 @@ public class HelpInitiator extends ContractNetInitiator {
             }
         }
 
-        MessageComparator comparator = new MessageComparator();
-        Collections.sort(results, comparator);
-
         //retrieve the initial cfp
-        ContentElement ce = myAgent.getContentManager().extractContent((ACLMessage)(getDataStore().get(CFP_KEY)));
+        ContentElement ce = myAgent.getContentManager().extractContent((ACLMessage) (getDataStore().get(CFP_KEY)));
 
-        if(ce instanceof Action && (((Action) ce).getAction()) instanceof GetHelp){
-            GetHelp help = (GetHelp)((Action) ce).getAction();
-            PositionInfo sourcePosition = help.getCallForProposal().getSrcGom().getPosition();
+        if (ce instanceof Action && (((Action) ce).getAction()) instanceof GetHelp) {
+            GetHelp help = (GetHelp) ((Action) ce).getAction();
+            PositionInfo srcPosition = help.getCallForProposal().getSrcGom().getPosition();
+            PositionInfo destPosition = help.getCallForProposal().getDestGom().getPosition();
 
-            String conversation_id = ((ACLMessage)responses.get(0)).getConversationId();
-            myAgent.addBehaviour(new StartJobBehaviour(myAgent, conversation_id, (ACLMessage)(getDataStore().get(CFP_KEY))));
+            ACLMessage ownProposal = createOwnProposal(srcPosition, destPosition);
+            results.add(ownProposal);
+
+            MessageComparator comparator = new MessageComparator();
+            Collections.sort(results, comparator);
+
+            String conversation_id = ((ACLMessage) responses.get(0)).getConversationId();
+            JobInitialPosition destination = null;
 
             // accept best trNumber proposals
             for (int i = 0; i < results.size(); i++) {
                 ACLMessage m = results.get(i).createReply();
-                if(i<this.trNumber)
+                if (i < this.trNumber) {
+                    if((results.get(i)).equals(ownProposal))
+                    {
+                        destination = new JobInitialPosition();
+                        destination.setPosition(srcPosition);
+                        destination.setConversation(conversation_id);
+                        destination.setSender(myAgent.getAID());
+                        continue;
+                    }
                     m.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+                    try {
+                        JobInitialPosition d = new JobInitialPosition();
+                        d.setPosition(srcPosition);
+                        myAgent.getContentManager().fillContent(m, d);
+                        System.out.println("ACCEPT REPLY " + m.getInReplyTo());
+                    } catch (Codec.CodecException e) {
+                        e.printStackTrace();
+                    } catch (OntologyException e) {
+                        e.printStackTrace();
+                    }
+                }
                 else
                     m.setPerformative(ACLMessage.REJECT_PROPOSAL);
                 m.setLanguage(CODEC.getName());
                 m.setOntology(ONTO.getName());
                 // send info on where the job takes place
-                try {
-                    JobInitialPosition d = new JobInitialPosition();
-                    d.setPosition(sourcePosition);
-                    myAgent.getContentManager().fillContent(m, d);
-                    System.out.println("ACCEPT REPLY "+m.getInReplyTo());
-                } catch (Codec.CodecException e) {
-                    e.printStackTrace();
-                } catch (OntologyException e) {
-                    e.printStackTrace();
-                }
 
                 acceptances.add(m);
 
             }
+            myAgent.addBehaviour(new StartJobBehaviour(myAgent, conversation_id, destination, (ACLMessage) (getDataStore().get(CFP_KEY))));
+
         }
+    }
+
+    private ACLMessage createOwnProposal(PositionInfo src, PositionInfo dest){
+        ACLMessage proposal = new ACLMessage(ACLMessage.PROPOSE);
+        proposal.setSender(myAgent.getAID());
+
+        float taskDistance = Distance.absolute(dest, src);
+        float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,false);
+        proposal.setOntology(ONTO.getName());
+        proposal.setLanguage(CODEC.getName());
+
+        SendResult sr = new SendResult();
+        sr.setResult(utility);
+
+        Action a = new Action(super.myAgent.getAID(), sr);
+        try {
+            super.myAgent.getContentManager().fillContent(proposal, a);
+        } catch (Codec.CodecException cex) {
+            cex.printStackTrace();
+        } catch (OntologyException oex) {
+            oex.printStackTrace();
+        }
+        return proposal;
+
     }
 }
