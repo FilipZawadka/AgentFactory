@@ -34,6 +34,7 @@ public class GOTr {
     }
 
     public void dispose(){
+        System.out.println("REACHED DESTINATION "+position);
         board.GOTrList.remove(this);
     }
 

@@ -2,10 +2,7 @@ package com.pw.behaviours;
 
 import com.pw.agents.GOTr;
 import com.pw.agents.TrAgent;
-import com.pw.biddingOntology.BiddingOntology;
-import com.pw.biddingOntology.CallForProposal;
-import com.pw.biddingOntology.GetHelp;
-import com.pw.biddingOntology.PositionInfo;
+import com.pw.biddingOntology.*;
 import com.pw.utils.Position;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
@@ -38,7 +35,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
     }
 
     @SneakyThrows
-    public StartJobBehaviour(Agent a, String conversation_id, ACLMessage cfp) {
+    public StartJobBehaviour(Agent a, String conversation_id, JobInitialPosition destination, ACLMessage cfp) {
         super(a);
         System.out.println("@@@@@@@@@@@@@@@@@@@@ START GOTRING");
 
@@ -62,6 +59,8 @@ public class StartJobBehaviour extends SimpleBehaviour {
         this.state = State.RECEIVE_INFORM;
         this.trAgents = new ArrayList<>();
 //        this.trAgents.add((TrAgent)myAgent);
+        if(destination!=null)
+            ((TrAgent)myAgent).addJobPosition(destination);
     }
 
     @Override
