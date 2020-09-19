@@ -42,6 +42,7 @@ public class TrAgent extends Agent {
 
     public void setPosition(Position _position) {
         position = _position;
+        board.updateGUI();
     }
 
     public Position getPosition() {

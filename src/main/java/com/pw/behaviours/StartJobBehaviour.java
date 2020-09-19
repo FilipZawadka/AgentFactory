@@ -71,7 +71,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
             case RECEIVE_INFORM:
                 inform = myAgent.receive(this.mt);
                 if(inform != null){
-                    trAgents.add((TrAgent)(((TrAgent)myAgent).getBoard().getAgentByAID(inform.getSender())));
+                    trAgents.add((TrAgent)(((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender())));
                     if(trAgents.size() == trNumber) {
                         System.out.println("################# RECEIVED ALL INFORMS");
                         this.state = State.CREATE_GOTR;

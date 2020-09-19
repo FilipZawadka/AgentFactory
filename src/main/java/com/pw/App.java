@@ -14,7 +14,9 @@ public class App {
         Properties properties = new Properties();
         properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
         AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
+        Scenerio1 scenerio = new Scenerio1();
+        Factory factory = new Factory(scenerio, mainContainer);
 
-        Factory factory = new Factory(new Scenerio1(), mainContainer);
+        //GUI gui = new GUI(scenerio.getBoardHeight(),scenerio.getBoardWidth());
     }
 }
