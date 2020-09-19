@@ -26,7 +26,7 @@ public class GOTr {
 
     public TrAgent getTrByAID(AID trAID){
         for (TrAgent a: trlist){
-            if(a.getAID()==trAID){
+            if(a.getAID().equals(trAID)){
                 return a;
             }
         }
@@ -44,12 +44,17 @@ public class GOTr {
 
     public Position getPosition() {
         return position;
-
     }
 
 
     public String getId() {
         return id;
+    }
+
+    private void releaseTrs(){
+        for(TrAgent a : trlist){
+            a.release();
+        }
     }
 
     private void updateTRs() {
@@ -112,45 +117,55 @@ public class GOTr {
             boolean blocked = true;
             while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
                 moveRight();
+                System.out.println(position);
                 blocked = false;
             }
             while (position.getX() > dest.getX() && isPositionFree(NeighborPosition.getLeftPosition(position))) {
                 moveLeft();
+                System.out.println(position);
                 blocked = false;
             }
             while (position.getY() < dest.getY() && isPositionFree(NeighborPosition.getUpPosition(position))) {
                 moveUp();
+                System.out.println(position);
                 blocked = false;
             }
             while (position.getY() > dest.getY() && isPositionFree(NeighborPosition.getDownPosition(position))) {
                 moveDown();
+                System.out.println(position);
                 blocked = false;
             }
-            if (blocked){
-                switch((int)(Math.random()*4)){
+            if (blocked) {
+                switch ((int) (Math.random() * 4)) {
                     case 0:
-                        if(isPositionFree(NeighborPosition.getRightPosition(position))){
+                        if (isPositionFree(NeighborPosition.getRightPosition(position))) {
                             moveRight();
+                            System.out.println(position);
                             break;
                         }
                     case 1:
-                        if(isPositionFree(NeighborPosition.getLeftPosition(position))){
+                        if (isPositionFree(NeighborPosition.getLeftPosition(position))) {
                             moveLeft();
+                            System.out.println(position);
                             break;
                         }
                     case 2:
-                        if(isPositionFree(NeighborPosition.getUpPosition(position))){
+                        if (isPositionFree(NeighborPosition.getUpPosition(position))) {
                             moveUp();
+                            System.out.println(position);
                             break;
                         }
                     default:
-                        if(isPositionFree(NeighborPosition.getDownPosition(position))){
+                        if (isPositionFree(NeighborPosition.getDownPosition(position))) {
                             moveDown();
+                            System.out.println(position);
                             break;
                         }
                 }
             }
         }
+        releaseTrs();
         dispose();
     }
 }
+

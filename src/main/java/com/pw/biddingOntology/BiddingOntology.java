@@ -39,7 +39,8 @@ public class BiddingOntology extends Ontology {
     public static final String GOM_JOB_REQUEST_MATERIAL = "materialInfo";
 
     public static final String JOB_INITIAL_POSITION = "jobInitialPosition";
-    public static final String JOB_MESSAGE = "message";
+    public static final String JOB_SENDER = "sender";
+    public static final String JOB_CONVERSATION = "conversation";
 
     private static Ontology theInstance = new BiddingOntology();
 
@@ -93,7 +94,9 @@ public class BiddingOntology extends Ontology {
 
             PredicateSchema p = (PredicateSchema) getSchema(JOB_INITIAL_POSITION);
             p.add(POSITION, getSchema(POSITION));
-            p.add(JOB_MESSAGE, getSchema(BasicOntology.ACLMSG), ObjectSchema.OPTIONAL);
+            p.add(JOB_SENDER, getSchema(BasicOntology.AID), ObjectSchema.OPTIONAL);
+            p.add(JOB_CONVERSATION, getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
+
 
         } catch (OntologyException oe) {
             oe.printStackTrace();
