@@ -43,7 +43,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
         System.out.println("@@@@@@@@@@@@@@@@@@@@ START GOTRING");
 
         this.mt = MessageTemplate.and(
-                MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+                MessageTemplate.MatchPerformative(ACLMessage.INFORM_IF),
                 MessageTemplate.and(
                         MessageTemplate.MatchOntology(onto.getName()),
                         MessageTemplate.and(
@@ -67,14 +67,14 @@ public class StartJobBehaviour extends SimpleBehaviour {
     @Override
     public void action() {
         ACLMessage inform;
-        System.out.println(this.state);
+//        System.out.println(this.state);
 
         switch(this.state){
             case RECEIVE_INFORM:
                 inform = myAgent.receive(this.mt);
                 if(inform != null){
                     TrAgent tr = ((TrAgent)myAgent).getBoard().getTrByAID(inform.getSender());
-                    System.out.println(myAgent.getLocalName()+" Received inform from: "+tr.getLocalName());
+                    System.out.println(myAgent.getLocalName()+" Received, inform from: "+tr.getLocalName());
                     if(!trAgents.contains(tr))
                         trAgents.add(tr);
                     if(trAgents.size() == trNumber) {

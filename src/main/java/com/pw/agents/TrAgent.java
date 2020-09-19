@@ -27,6 +27,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.pw.Factory.CFP_ID_COUNTER;
 import static com.pw.utils.Naming.GOM;
 
 @Getter
@@ -117,6 +118,7 @@ public class TrAgent extends Agent {
 
             cfp.setOntology(onto.getName());
             cfp.setLanguage(codec.getName());
+            cfp.setConversationId("cfp"+CFP_ID_COUNTER.getAndIncrement());
 
             GetHelp gh = new GetHelp();
             gh.setCallForProposal(cfpContent);
@@ -266,6 +268,15 @@ public class TrAgent extends Agent {
         }
     }
 
+    public boolean destinationReached(JobInitialPosition destination){
+        if(destinations.contains(destination))
+            return false;
+        else {
+            System.out.println("REACHED");
+            return true;
+        }
+    }
+
     private void addGomRespondingAndHelpRequestBehaviors() {
         MessageTemplate mt = MessageTemplate.and(
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
@@ -314,7 +325,7 @@ public class TrAgent extends Agent {
                         goTo(destinationPosition);
 
                         // info on reached job starting position
-                        ACLMessage result = new ACLMessage(ACLMessage.INFORM);
+                        ACLMessage result = new ACLMessage(ACLMessage.INFORM_IF);
                         result.addReceiver(destination.getSender());
                         result.setConversationId(destination.getConversation());
                         result.setOntology(onto.getName());

@@ -87,9 +87,21 @@ public class HelpResponder extends SSContractNetResponder {
             destination.setSender(accept.getSender());
             destination.setConversation(accept.getConversationId());
             ((TrAgent)myAgent).addJobPosition(destination);
+
+            ACLMessage result = accept.createReply();
+            result.setPerformative(ACLMessage.INFORM);
+            result.setConversationId(destination.getConversation());
+            result.setOntology(onto.getName());
+//            System.out.println("INFORM at "+((TrAgent)myAgent).getPosition().toString()+" : " + super.myAgent.getName()+result);
+            return result;
         }
 
         return null;
     }
 
+
+    @Override
+    protected void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
+        super.handleRejectProposal(cfp, propose, reject);
+    }
 }
