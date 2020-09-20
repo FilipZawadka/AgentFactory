@@ -1,4 +1,4 @@
-package com.pw.scenerios;
+package com.pw.scenarios;
 
 import com.pw.utils.GomProcess;
 import com.pw.utils.Material;

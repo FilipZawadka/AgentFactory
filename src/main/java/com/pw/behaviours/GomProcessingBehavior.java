@@ -5,7 +5,7 @@ import com.pw.biddingOntology.GomInfo;
 import com.pw.biddingOntology.GomJobRequest;
 import com.pw.biddingOntology.MaterialInfo;
 import com.pw.biddingOntology.PositionInfo;
-import com.pw.scenerios.GomDefinition;
+import com.pw.scenarios.GomDefinition;
 import com.pw.utils.GomProcess;
 import com.pw.utils.Material;
 import jade.content.onto.basic.Action;

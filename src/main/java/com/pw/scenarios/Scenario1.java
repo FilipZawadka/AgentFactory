@@ -1,16 +1,16 @@
-package com.pw.scenerios;
+package com.pw.scenarios;
 
 import com.google.common.collect.ImmutableMap;
-import com.pw.scenerios.GomDefinition.MaterialGenerator;
+import com.pw.scenarios.GomDefinition.MaterialGenerator;
 import com.pw.utils.GomProcess;
 import com.pw.utils.Material;
 import com.pw.utils.Position;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class Scenerio1 extends Scenario {
-    public Scenerio1() {
-        super(16, 16, 1000000);
+public class Scenario1 extends Scenario {
+    public Scenario1() {
+        super(16, 16, -1);
 
         Material m1 = Material.builder().name("m1").weight(5).build();
         Material m2 = Material.builder().name("m2").weight(5).build();

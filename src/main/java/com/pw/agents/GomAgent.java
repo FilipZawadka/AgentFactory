@@ -3,7 +3,7 @@ package com.pw.agents;
 import com.pw.behaviours.GomProcessingBehavior;
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.board.Board;
-import com.pw.scenerios.GomDefinition;
+import com.pw.scenarios.GomDefinition;
 import com.pw.utils.Material;
 import com.pw.utils.Position;
 import jade.content.lang.Codec;
@@ -13,7 +13,6 @@ import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

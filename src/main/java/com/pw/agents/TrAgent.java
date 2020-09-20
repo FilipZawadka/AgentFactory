@@ -48,7 +48,7 @@ public class TrAgent extends Agent {
     @SneakyThrows
     public void setPosition(Position _position) {
         position = _position;
-        //Thread.sleep(100);
+//        Thread.sleep(100);
         //board.updateGUI();
     }
 
