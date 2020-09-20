@@ -28,7 +28,9 @@ public class GomAgent extends Agent {
     private final Map<Material, Integer> materials = new ConcurrentHashMap<>();
 
     private GomDefinition definition;
+    private Position position;
     public Board board;
+
 
     protected void setup() {
         super.setup();
@@ -45,6 +47,7 @@ public class GomAgent extends Agent {
         if (this.definition.isFinal()) {
             addFinalGomBehavior();
         }
+        this.position = definition.getPosition();
         this.board.GomList.add(this);
     }
 

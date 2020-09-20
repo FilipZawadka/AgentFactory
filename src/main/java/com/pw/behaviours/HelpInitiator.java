@@ -126,6 +126,7 @@ public class HelpInitiator extends ContractNetInitiator {
         proposal.setSender(myAgent.getAID());
 
         float taskDistance = Distance.absolute(dest, src);
+        taskDistance+= Distance.absolute(new PositionInfo(((TrAgent) myAgent).getPosition()),src);
         float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,true);
         proposal.setOntology(ONTO.getName());
         proposal.setLanguage(CODEC.getName());
