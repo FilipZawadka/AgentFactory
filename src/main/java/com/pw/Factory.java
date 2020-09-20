@@ -22,6 +22,7 @@ public class Factory {
     public static final AtomicInteger CFP_ID_COUNTER = new AtomicInteger(0);
     public static final Codec CODEC = new SLCodec();
     public static final Ontology ONTO = BiddingOntology.getInstance();
+    public GUI gui;
 
     public Factory(Scenario scenario, AgentContainer container) throws StaleProxyException {
         Board board = new Board(scenario.getBoardWidth(), scenario.getBoardHeight());
@@ -35,7 +36,7 @@ public class Factory {
             agentController = container.createNewAgent(TR(gom.getNumber()), TR_CLASS_NAME, trArguments);
             agentController.start();
         }
-        GUI gui = new GUI(board);
+        gui = new GUI(board);
         gui.start();
     }
 }

@@ -15,17 +15,22 @@ public class GUI implements Runnable {
     private Board board;
     private ImageIcon emptyIcon;
     private ImageIcon gotrIcon;
-
+    private ImageIcon trIcon;
+    private ImageIcon gomIcon;
+    private ImageIcon gomwithtrsIcon;
     public GUI(Board _board) {
         board = _board;
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
         int b = 130;
         panel.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
-        panel.setLayout(new GridLayout(board.height, board.width, 15, 15));
+        panel.setLayout(new GridLayout(board.height, board.width, 10, 10));
         panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        emptyIcon = new ImageIcon("src/main/resources/icons/stop.png");
-        gotrIcon = new ImageIcon("src/main/resources/icons/boxes (1).png");
+        emptyIcon = new ImageIcon("src/main/resources/icons/square.png");
+        gotrIcon = new ImageIcon("src/main/resources/icons/gotr.png");
+        gomIcon = new ImageIcon("src/main/resources/icons/gom.png");
+        trIcon = new ImageIcon("src/main/resources/icons/tr.png");
+        gomwithtrsIcon = new ImageIcon("src/main/resources/icons/gomwithtrs.png");
 
         labels = new JLabel[board.height * board.width];
         for (int i = 0; i < board.height * board.width; i++) {
@@ -70,11 +75,29 @@ public class GUI implements Runnable {
             t.start();
         }
     }
+    public void stop() throws InterruptedException {
+        t.join();
+    }
 
     public void updateGUI(int[] gui) {
         for (int i = 0; i < labels.length; i++) {
             //labels[i].setText("" + gui[i]);
-            labels[i].setIcon(gotrIcon);
+            if(gui[i]==0) {
+                labels[i].setIcon(emptyIcon);
+            }
+            else if(gui[i]==1){
+                labels[i].setIcon(trIcon);
+            }
+            else if (gui[i]==100){
+                labels[i].setIcon(gomIcon);
+            }
+            else if (gui[i]<100){
+                labels[i].setIcon(gotrIcon);
+            }
+            else {
+                labels[i].setIcon(gomwithtrsIcon);
+            }
+
 
         }
     }
