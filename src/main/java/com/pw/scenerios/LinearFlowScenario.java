@@ -8,8 +8,8 @@ import com.pw.utils.Position;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class Scenerio1 extends Scenario {
-    public Scenerio1() {
+public class LinearFlowScenario extends Scenario {
+    public LinearFlowScenario() {
         super(16, 16, 1000000);
 
         Material m1 = Material.builder().name("m1").weight(5).build();

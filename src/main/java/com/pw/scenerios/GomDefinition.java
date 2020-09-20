@@ -5,14 +5,13 @@ import com.pw.utils.Material;
 import com.pw.utils.Position;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
+@Data
 public class GomDefinition {
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
@@ -37,6 +36,10 @@ public class GomDefinition {
 
     public void addProcess(GomProcess process) {
         this.processes.add(process);
+    }
+
+    public Position getPosition() {
+        return new Position(this.position);
     }
 
     @Data

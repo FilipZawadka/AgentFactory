@@ -13,7 +13,6 @@ import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPANames;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,7 +46,7 @@ public class GomAgent extends Agent {
         if (this.definition.isFinal()) {
             addFinalGomBehavior();
         }
-        this.position = definition.getPosition();
+        this.position = this.definition.getPosition();
         this.board.GomList.add(this);
     }
 
@@ -56,12 +55,12 @@ public class GomAgent extends Agent {
     }
 
     public Position getPosition() {
-        return definition.getPosition();
+        return this.definition.getPosition();
     }
 
 
     public String getId() {
-        return "" + definition.getNumber();
+        return "" + this.definition.getNumber();
     }
 
     private void addMaterialGenerationBehaviors() {

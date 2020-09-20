@@ -11,8 +11,13 @@ import lombok.NoArgsConstructor;
 public class Position {
     private Integer x, y;
 
-    public Position(PositionInfo positionInfo){
+    public Position(PositionInfo positionInfo) {
         this.x = positionInfo.getX();
         this.y = positionInfo.getY();
+    }
+
+    public Position(Position position) {
+        this.x = position.x;
+        this.y = position.y;
     }
 }
