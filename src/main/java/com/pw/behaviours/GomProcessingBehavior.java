@@ -56,7 +56,9 @@ public class GomProcessingBehavior extends TickerBehaviour {
         //TODO: May want to add some processing delay later..
         // ..
 
-        sendJobToTR(process.getOutputMaterial(), process.getDestination());
+        process.getOutputs().forEach(output -> {
+            sendJobToTR(output.getMaterial(), output.getDestination());
+        });
     }
 
     private void sendJobToTR(Material material, GomDefinition destination) {

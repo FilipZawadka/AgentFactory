@@ -11,7 +11,7 @@ import static com.google.common.collect.ImmutableMap.of;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class OutcastScenario extends Scenario {
-    protected OutcastScenario() {
+    public OutcastScenario() {
         super(16, 16, 1000000);
 
         Material m1 = Material.builder().name("m1").weight(5).build();
