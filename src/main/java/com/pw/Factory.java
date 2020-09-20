@@ -31,14 +31,14 @@ public class Factory {
 
     private Board board;
     private AgentContainer container;
-    private ArrayList<AgentController> controllers;
+//    private ArrayList<AgentController> controllers;
     private Scenario scenario;
 
     public Factory(Scenario scenario, AgentContainer container) throws StaleProxyException {
         this.container = container;
         this.scenario = scenario;
         this.board = new Board(scenario.getBoardWidth(), scenario.getBoardHeight());
-        this.controllers = new ArrayList<>();
+//        this.controllers = new ArrayList<>();
 
 //        for (GomDefinition gom : scenario.getGomDefinitions()) {
 //            Object[] gomArguments = {gom,board};
@@ -54,17 +54,17 @@ public class Factory {
     }
 
     public void start() throws StaleProxyException {
-        this.controllers = new ArrayList<>();
+//        this.controllers = new ArrayList<>();
         for (GomDefinition gom : scenario.getGomDefinitions()) {
             Object[] gomArguments = {gom,board};
             AgentController agentControllerGom = container.createNewAgent(GOM(gom.getNumber()), GOM_CLASS_NAME, gomArguments);
             agentControllerGom.start();
-            this.controllers.add(agentControllerGom);
+//            this.controllers.add(agentControllerGom);
 
             Object[] trArguments = {gom.getNumber(), board, gom.getPosition(), scenario.getTrBreakContractValue()};
             AgentController agentControllerTr = container.createNewAgent(TR(gom.getNumber()), TR_CLASS_NAME, trArguments);
             agentControllerTr.start();
-            this.controllers.add(agentControllerTr);
+//            this.controllers.add(agentControllerTr);
         }
     }
 
