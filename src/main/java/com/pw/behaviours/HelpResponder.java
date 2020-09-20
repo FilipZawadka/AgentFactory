@@ -33,10 +33,6 @@ public class HelpResponder extends SSContractNetResponder {
     @SneakyThrows
     @Override
     protected ACLMessage handleCfp(ACLMessage cfp) throws RefuseException, FailureException, NotUnderstoodException {
-        ACLMessage reply = cfp.createReply();
-        //process the content
-        reply.setPerformative(ACLMessage.PROPOSE);
-        //calculate the UTILITY
         ContentElement ce = myAgent.getContentManager().extractContent(cfp);
         GetHelp help;
         CallForProposal cfpContent;
@@ -50,11 +46,22 @@ public class HelpResponder extends SSContractNetResponder {
 
         float taskDistance = Distance.absolute(cfpContent.getDestGom().getPosition(),cfpContent.getSrcGom().getPosition());
         float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,false);
+
+        ACLMessage reply = cfp.createReply();
+        if(((TrAgent) myAgent).getBreakContractValue() != -1 && utility <= ((TrAgent) myAgent).getBreakContractValue()){
+            reply.setPerformative(ACLMessage.REFUSE);
+            System.out.println("REFUSE FROM "+myAgent.getLocalName());
+        }
+        else{
+            reply.setPerformative(ACLMessage.PROPOSE);
+            System.out.println("PROPOSE FROM "+myAgent.getLocalName());
+        }
         reply.setOntology(onto.getName());
         reply.setLanguage(codec.getName());
 
         SendResult sr = new SendResult();
         sr.setResult(utility);
+        System.out.println(utility);
 
         Action a = new Action(super.myAgent.getAID(), sr);
         try {
@@ -64,8 +71,6 @@ public class HelpResponder extends SSContractNetResponder {
         } catch (OntologyException oex) {
             oex.printStackTrace();
         }
-
-        System.out.println("REPLY FROM "+myAgent.getLocalName());
 
         return reply;
     }

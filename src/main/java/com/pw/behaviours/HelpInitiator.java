@@ -24,12 +24,13 @@ import static com.pw.Factory.CODEC;
 import static com.pw.Factory.ONTO;
 
 public class HelpInitiator extends ContractNetInitiator {
-    private int trNumber, readyTrs;
+    private int trNumber, trNumberTmp;
     private ArrayList<ACLMessage> proposes;
 
     public HelpInitiator(Agent a, ACLMessage cfp, int _trNumber) {
         super(a, cfp);
         this.trNumber = _trNumber;
+        this.trNumberTmp = _trNumber;
     }
 
     @Override
@@ -72,10 +73,15 @@ public class HelpInitiator extends ContractNetInitiator {
             String conversation_id = ((ACLMessage) responses.get(0)).getConversationId();
             JobInitialPosition destination = null;
 
+            // if there are less proposals than the needed number of trs, reject all and start new cfp
+            if(results.size() < this.trNumberTmp){
+                this.trNumberTmp = 0;
+            }
+
             // accept best trNumber proposals
             for (int i = 0; i < results.size(); i++) {
                 ACLMessage m = results.get(i).createReply();
-                if (i < this.trNumber) {
+                if (i < this.trNumberTmp) {
                     if((results.get(i)).equals(ownProposal))
                     {
                         destination = new JobInitialPosition();
@@ -105,8 +111,13 @@ public class HelpInitiator extends ContractNetInitiator {
                 acceptances.add(m);
 
             }
-            myAgent.addBehaviour(new StartJobBehaviour(myAgent, conversation_id, destination, (ACLMessage) (getDataStore().get(CFP_KEY))));
-
+            // start the job or call the cfp again
+            if(this.trNumberTmp > 0)
+                myAgent.addBehaviour(new StartJobBehaviour(myAgent, conversation_id, destination, (ACLMessage) (getDataStore().get(CFP_KEY))));
+            else{
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTRACT BROKEN");
+                myAgent.addBehaviour(new HelpInitiator(myAgent, (ACLMessage) getDataStore().get(CFP_KEY), this.trNumber));
+            }
         }
     }
 

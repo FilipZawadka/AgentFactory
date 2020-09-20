@@ -11,11 +11,11 @@ public abstract class Scenario {
     protected final Integer boardHeight;
 
     protected final List<GomDefinition> gomDefinitions = new ArrayList<>();
-    protected final Boolean trBreakingContract;
+    protected final Integer trBreakContractValue;
 
-    protected Scenario(Integer boardWidth, Integer boardHeight, Boolean trBreakingContract) {
+    protected Scenario(Integer boardWidth, Integer boardHeight, Integer trBreakContractValue) {
         this.boardWidth = boardWidth;
         this.boardHeight = boardHeight;
-        this.trBreakingContract = trBreakingContract;
+        this.trBreakContractValue = trBreakContractValue;
     }
 }

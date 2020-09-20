@@ -31,7 +31,7 @@ public class Factory {
             AgentController agentController = container.createNewAgent(GOM(gom.getNumber()), GOM_CLASS_NAME, gomArguments);
             agentController.start();
 
-            Object[] trArguments = {gom.getNumber(), board, gom.getPosition(), scenario.getTrBreakingContract()};
+            Object[] trArguments = {gom.getNumber(), board, gom.getPosition(), scenario.getTrBreakContractValue()};
             agentController = container.createNewAgent(TR(gom.getNumber()), TR_CLASS_NAME, trArguments);
             agentController.start();
         }

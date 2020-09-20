@@ -10,7 +10,7 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class Scenerio1 extends Scenario {
     public Scenerio1() {
-        super(16, 16, false);
+        super(16, 16, 1000000);
 
         Material m1 = Material.builder().name("m1").weight(5).build();
         Material m2 = Material.builder().name("m2").weight(5).build();

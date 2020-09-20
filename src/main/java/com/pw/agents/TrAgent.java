@@ -43,6 +43,7 @@ public class TrAgent extends Agent {
     private Integer timeOfInactivity;
     private ArrayList<JobInitialPosition> destinations;
     private Integer tokens;
+    private Integer breakContractValue;
 
     @SneakyThrows
     public void setPosition(Position _position) {
@@ -66,10 +67,7 @@ public class TrAgent extends Agent {
         this.destinations = new ArrayList<>();
         this.timeOfInactivity = 0;
         this.tokens = 0;
-        Object[] args = getArguments();
-        this.id = args[0].toString();
-        this.board = (Board) args[1];
-        this.position = (Position) args[2];
+        unpackArguments();
 
         this.board.TrList.add(this);
         addToDf();
@@ -80,6 +78,14 @@ public class TrAgent extends Agent {
         addHelpRespondingBehavior();
         addGomRespondingAndHelpRequestBehaviors();
         addDestinationsCheckingBehavior();
+    }
+
+    private void unpackArguments(){
+        Object[] args = getArguments();
+        this.id = args[0].toString();
+        this.board = (Board) args[1];
+        this.position = (Position) args[2];
+        this.breakContractValue = (Integer) args[3];
     }
 
     public float utilityFunction(float deliveryLength,boolean itsMyGom){
@@ -116,7 +122,6 @@ public class TrAgent extends Agent {
         }
         if (responders.size() > 0) {
             // initialize cfp
-            // TODO add oneself to the receivers
             for (int i = 0; i < responders.size(); ++i) {
                 if (!responders.get(i).equals(getAID()))
                     cfp.addReceiver(responders.get(i));
