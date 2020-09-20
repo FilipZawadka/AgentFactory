@@ -26,7 +26,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
     private Ontology onto = BiddingOntology.getInstance();
     private MessageTemplate mt;
     private List<TrAgent> trAgents;
-    private Integer trNumber;
+    private Integer trNumber, tokens;
     private PositionInfo start, end;
     private State state;
 
@@ -54,6 +54,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
             this.trNumber = cfpContent.getTrNumber();
             this.start = cfpContent.getSrcGom().getPosition();
             this.end = cfpContent.getDestGom().getPosition();
+            this.tokens = cfpContent.getTokens();
         }
 
         this.state = State.RECEIVE_INFORM;
@@ -89,7 +90,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
                 // TODO gotr id
                 System.out.println("################# GOTR GO GO GO");
 //                ((TrAgent)myAgent).getBoard().addGOTr(new Position(start), new Position(end), ((TrAgent)myAgent).getId(), trAgents);
-                GOTr gotr = new GOTr(new Position(start), ((TrAgent)myAgent).getId(), ((TrAgent)myAgent).getBoard(), trAgents);
+                GOTr gotr = new GOTr(new Position(start), ((TrAgent)myAgent).getId(), ((TrAgent)myAgent).getBoard(), trAgents, this.tokens);
                 gotr.goTo(new Position(end));
                 this.state = State.DONE;
                 break;
