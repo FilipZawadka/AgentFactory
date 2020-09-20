@@ -44,6 +44,7 @@ public class TrAgent extends Agent {
     private ArrayList<JobInitialPosition> destinations;
     private Integer tokens;
     private Integer breakContractValue;
+    private long lastActiveTime;
 
     @SneakyThrows
     public void setPosition(Position _position) {
@@ -66,6 +67,7 @@ public class TrAgent extends Agent {
         this.busy = false;
         this.destinations = new ArrayList<>();
         this.timeOfInactivity = 0;
+        lastActiveTime = System.currentTimeMillis();
         this.tokens = 0;
         unpackArguments();
 
@@ -88,14 +90,15 @@ public class TrAgent extends Agent {
         this.breakContractValue = (Integer) args[3];
     }
 
-    public float utilityFunction(float deliveryLength,boolean itsMyGom){
+    public float utilityFunction(int offeredTokens,float deliveryLength,boolean itsMyGom){
         float inactivityParameter =1;
-        float deliveryLengthParameter = 0.5f;
+        float deliveryLengthParameter = 1;
         float loyaltyParameter = 0;
+        float offeredTokensParameter = 1;
         if (itsMyGom) {
             loyaltyParameter = 20;
         }
-        return ((inactivityParameter * timeOfInactivity) + loyaltyParameter - (deliveryLengthParameter * deliveryLength));
+        return ((inactivityParameter * timeOfInactivity) + loyaltyParameter +(offeredTokens*offeredTokensParameter)- (deliveryLengthParameter * deliveryLength));
 
     }
 
@@ -320,10 +323,11 @@ public class TrAgent extends Agent {
             public void action() {
                 if (!busy) {
                     if (destinations.size() == 0) {
-                        timeOfInactivity++;
+                        timeOfInactivity = (int)((System.currentTimeMillis() - lastActiveTime)*0.001);
                     } else {
                         lock();
                         timeOfInactivity = 0;
+                        lastActiveTime = System.currentTimeMillis();
                         JobInitialPosition destination = destinations.get(0);
                         Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
                         System.out.println(getLocalName()+" GO TO DESTINATION "+" "+destinationPosition.toString());

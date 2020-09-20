@@ -44,9 +44,9 @@ public class HelpResponder extends SSContractNetResponder {
             throw new Exception("ce is not Action or not Gethelp");
         }
 
-        float taskDistance = Distance.absolute(cfpContent.getDestGom().getPosition(),cfpContent.getSrcGom().getPosition());
-        taskDistance+= Distance.absolute(new PositionInfo(((TrAgent) myAgent).getPosition()),cfpContent.getSrcGom().getPosition());
-        float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,false);
+        int tokens = Distance.absolute(cfpContent.getDestGom().getPosition(),cfpContent.getSrcGom().getPosition());
+        float taskDistance = Distance.absolute(new PositionInfo(((TrAgent) myAgent).getPosition()),cfpContent.getSrcGom().getPosition());
+        float utility = ((TrAgent) myAgent).utilityFunction(tokens,taskDistance,false);
 
         ACLMessage reply = cfp.createReply();
         if(((TrAgent) myAgent).getBreakContractValue() != -1 && utility <= ((TrAgent) myAgent).getBreakContractValue()){

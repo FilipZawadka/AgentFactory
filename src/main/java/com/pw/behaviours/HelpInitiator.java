@@ -125,9 +125,9 @@ public class HelpInitiator extends ContractNetInitiator {
         ACLMessage proposal = new ACLMessage(ACLMessage.PROPOSE);
         proposal.setSender(myAgent.getAID());
 
-        float taskDistance = Distance.absolute(dest, src);
-        taskDistance+= Distance.absolute(new PositionInfo(((TrAgent) myAgent).getPosition()),src);
-        float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,true);
+        int tokens = Distance.absolute(dest, src);
+        float taskDistance = Distance.absolute(new PositionInfo(((TrAgent) myAgent).getPosition()),src);
+        float utility = ((TrAgent) myAgent).utilityFunction(tokens,taskDistance,true);
         proposal.setOntology(ONTO.getName());
         proposal.setLanguage(CODEC.getName());
 
