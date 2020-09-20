@@ -4,6 +4,7 @@ import com.pw.Factory;
 import com.pw.GUI;
 import com.pw.behaviours.UpdateBoardBehaviour;
 import com.pw.scenarios.Scenario;
+import jade.core.Runtime;
 import jade.gui.GuiEvent;
 import jade.wrapper.AgentContainer;
 import lombok.Getter;
@@ -49,11 +50,11 @@ public class GuiAgent extends jade.gui.GuiAgent {
                     removeBehaviour(this.updateBoardBehaviour);
                 this.updateBoardBehaviour = null;
                 if(this.currentFactory != null)
-                    this.currentFactory.takeDown();
+                    this.currentFactory.delete();
                 this.currentFactory = null;
                 break;
             case EXIT:
-                this.takeDown();
+                this.exit();
                 break;
         }
     }
@@ -72,11 +73,11 @@ public class GuiAgent extends jade.gui.GuiAgent {
     }
 
     @SneakyThrows
-    public void takeDown() {
+    protected void exit() {
         if(this.updateBoardBehaviour != null)
             removeBehaviour(this.updateBoardBehaviour);
         if(this.currentFactory != null)
-            this.currentFactory.takeDown();
+            this.currentFactory.delete();
         getGui().dispose();
         doDelete();
     }
