@@ -11,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 @Getter
@@ -42,7 +44,13 @@ public class GUI  extends JFrame implements ActionListener {
         setTitle("Gui");
         pack();
         setVisible(true);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent we) {
+                GuiEvent ge = new GuiEvent(this, GuiAgent.EXIT);
+                myAgent.postGuiEvent(ge);
+            }
+        });
 
         System.out.println("GUI created");
 
