@@ -3,15 +3,10 @@ package com.pw.behaviours;
 import com.pw.agents.TrAgent;
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.biddingOntology.GomJobRequest;
-import com.pw.biddingOntology.JobInitialPosition;
-import com.pw.biddingOntology.SendResult;
-import com.pw.utils.Distance;
-import com.pw.utils.Position;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
-import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -35,7 +30,6 @@ public class SendMaterialResponder extends AchieveREResponder {
         if (ce instanceof Action && ((Action) ce).getAction() instanceof GomJobRequest) {
             jobRequest = (GomJobRequest) ((Action) ce).getAction();
         }
-        System.out.println("$$$$$$$$$$$$$ TR received message: " + jobRequest);
 
         ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
 
