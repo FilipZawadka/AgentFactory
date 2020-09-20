@@ -11,6 +11,8 @@ import com.pw.utils.Position;
 import static com.google.common.collect.Lists.newArrayList;
 
 public class TreeFlowScenario extends Scenario {
+    protected TreeFlowScenario(Integer boardWidth, Integer boardHeight, Integer trBreakContractValue) {
+        super(16, 16, -1);
     public TreeFlowScenario() {
         super(16, 16, 1000000);
 
