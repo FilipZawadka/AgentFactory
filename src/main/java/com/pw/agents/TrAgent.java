@@ -25,7 +25,6 @@ import jade.lang.acl.MessageTemplate;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -44,7 +43,7 @@ public class TrAgent extends Agent {
     private Integer timeOfInactivity;
     private ArrayList<JobInitialPosition> destinations;
     private Integer tokens;
-    private long lastActiveTime;
+    private Integer breakContractValue;
 
     @SneakyThrows
     public void setPosition(Position _position) {
@@ -67,12 +66,8 @@ public class TrAgent extends Agent {
         this.busy = false;
         this.destinations = new ArrayList<>();
         this.timeOfInactivity = 0;
-        lastActiveTime = System.currentTimeMillis();
         this.tokens = 0;
-        Object[] args = getArguments();
-        this.id = args[0].toString();
-        this.board = (Board) args[1];
-        this.position = (Position) args[2];
+        unpackArguments();
 
         this.board.TrList.add(this);
         addToDf();
@@ -85,15 +80,22 @@ public class TrAgent extends Agent {
         addDestinationsCheckingBehavior();
     }
 
-    public float utilityFunction(int tokens,float taskDistance,boolean itsMyGom){
+    private void unpackArguments(){
+        Object[] args = getArguments();
+        this.id = args[0].toString();
+        this.board = (Board) args[1];
+        this.position = (Position) args[2];
+        this.breakContractValue = (Integer) args[3];
+    }
+
+    public float utilityFunction(int tokens,float deliveryLength,boolean itsMyGom){
         float inactivityParameter =1;
-        float tokensParameter = 1;
-        float taskDistanceParameter = 1;
+        float deliveryLengthParameter = 0.5f;
         float loyaltyParameter = 0;
         if (itsMyGom) {
             loyaltyParameter = 20;
         }
-        return ((inactivityParameter * timeOfInactivity) + loyaltyParameter+(tokens*tokensParameter) - (taskDistanceParameter * taskDistance));
+        return ((inactivityParameter * timeOfInactivity) + loyaltyParameter - (deliveryLengthParameter * deliveryLength));
 
     }
 
@@ -120,7 +122,6 @@ public class TrAgent extends Agent {
         }
         if (responders.size() > 0) {
             // initialize cfp
-            // TODO add oneself to the receivers
             for (int i = 0; i < responders.size(); ++i) {
                 if (!responders.get(i).equals(getAID()))
                     cfp.addReceiver(responders.get(i));
@@ -319,11 +320,10 @@ public class TrAgent extends Agent {
             public void action() {
                 if (!busy) {
                     if (destinations.size() == 0) {
-                        timeOfInactivity = (int)((System.currentTimeMillis() - lastActiveTime)*0.001);
+                        timeOfInactivity++;
                     } else {
                         lock();
                         timeOfInactivity = 0;
-                        lastActiveTime = System.currentTimeMillis();
                         JobInitialPosition destination = destinations.get(0);
                         Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
                         System.out.println(getLocalName()+" GO TO DESTINATION "+" "+destinationPosition.toString());
