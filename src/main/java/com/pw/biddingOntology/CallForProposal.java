@@ -13,4 +13,5 @@ public class CallForProposal implements Concept {
     private Integer trNumber;
     private GomInfo destGom, srcGom;
     private Integer tokens;
+    private MaterialInfo material;
 }

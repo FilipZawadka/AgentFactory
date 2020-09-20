@@ -12,23 +12,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GomDefinition {
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-    private final boolean isFinal;
     private final List<MaterialGenerator> materialGenerators = new ArrayList<>();
     private final Position position;
     private final int number;
 
     private final List<GomProcess> processes = new ArrayList<>();
 
-    public GomDefinition(boolean isFinal, Position position, MaterialGenerator... materialGenerators) {
-        this.isFinal = isFinal;
+    public GomDefinition(Position position, MaterialGenerator... materialGenerators) {
         this.position = position;
         this.materialGenerators.addAll(Arrays.asList(materialGenerators));
 
         this.number = COUNTER.getAndIncrement();
-    }
-
-    public GomDefinition(Position position, MaterialGenerator... materialGenerators) {
-        this(false, position, materialGenerators);
     }
 
     public void addProcess(GomProcess process) {

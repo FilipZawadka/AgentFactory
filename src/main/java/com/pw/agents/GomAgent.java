@@ -1,5 +1,6 @@
 package com.pw.agents;
 
+import com.pw.behaviours.GomDeliveryListenerBehavior;
 import com.pw.behaviours.GomProcessingBehavior;
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.board.Board;
@@ -17,7 +18,7 @@ import lombok.Getter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.lang.String.format;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Getter
 public class GomAgent extends Agent {
@@ -43,11 +44,17 @@ public class GomAgent extends Agent {
 
         addMaterialGenerationBehaviors();
         addBehaviour(new GomProcessingBehavior(this, 500));
-        if (this.definition.isFinal()) {
-            addFinalGomBehavior();
-        }
+        addBehaviour(new GomDeliveryListenerBehavior(this));
+
         this.position = this.definition.getPosition();
         this.board.GomList.add(this);
+    }
+
+    public void incrementMaterial(Material material, int amount) {
+        checkArgument(material != null);
+
+        this.materials.putIfAbsent(material, 0);
+        this.materials.put(material, this.materials.get(material) + amount);
     }
 
     public void setPosition(Position position) {
@@ -69,28 +76,9 @@ public class GomAgent extends Agent {
                 @Override
                 protected void onTick() {
                     GomAgent agent = (GomAgent) myAgent;
-                    Material material = generator.getMaterial();
-                    Integer amount = generator.getAmount();
-                    Map<Material, Integer> materials = agent.getMaterials();
-
-                    materials.putIfAbsent(material, 0);
-                    materials.put(material, materials.get(material) + amount);
+                    agent.incrementMaterial(generator.getMaterial(), generator.getAmount());
                 }
             });
-        });
-    }
-
-    private void addFinalGomBehavior() {
-        addBehaviour(new TickerBehaviour(this, 1000) {
-            @Override
-            protected void onTick() {
-                GomAgent agent = (GomAgent) myAgent;
-                if (!agent.getMaterials().isEmpty()) {
-                    agent.getMaterials().forEach((material, amount) -> {
-                        System.out.println(format("%s units of %s arrived to final GOM (#%s)", amount, material, agent.getDefinition().getNumber()));
-                    });
-                }
-            }
         });
     }
 }

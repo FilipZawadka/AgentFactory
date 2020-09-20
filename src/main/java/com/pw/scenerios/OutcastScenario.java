@@ -33,7 +33,7 @@ public class OutcastScenario extends Scenario {
         GomDefinition gom3 = new GomDefinition(new Position(8, 2));
         GomDefinition gom4 = new GomDefinition(new Position(12, 2));
         GomDefinition gom5 = new GomDefinition(new Position(12, 14));
-        GomDefinition gom6 = new GomDefinition(true, new Position(10, 2));
+        GomDefinition gom6 = new GomDefinition(new Position(10, 2));
 
         gom1.addProcess(GomProcess.builder()
             .inputMaterials(of(m1, 1))
