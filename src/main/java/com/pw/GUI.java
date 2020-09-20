@@ -100,35 +100,6 @@ public class GUI  extends JFrame implements ActionListener {
         return panel;
     }
 
-    public void run() {
-        System.out.println("Running " +  "GUI" );
-        try {
-            while (true){
-                int [] guiArr = new int[board.height*board.width];
-                for (GomAgent a: board.GomList){
-                    guiArr[a.getPosition().getX() + a.getPosition().getY()*board.width] += 100;
-                }
-                for (TrAgent a: board.TrList){
-                    guiArr[a.getPosition().getX() + a.getPosition().getY()*board.width] += 1;
-                }
-                updateGUI(guiArr);
-                Thread.sleep(50);
-            }
-        } catch (InterruptedException e) {
-            System.out.println("Thread " +  "GUI" + " interrupted.");
-        }
-    }
-
-    public void start () {
-        System.out.println("Starting " +  "GUI" );
-//        if (t == null) {
-//            t = new Thread (this, "GUI");
-//            t.setDaemon(true);
-//            t.start ();
-//        }
-        run();
-    }
-
     public void updateGUI(int[] gui){
         for(int i = 0;i<labels.length;i++){
             labels[i].setText(""+gui[i]);
@@ -145,11 +116,13 @@ public class GUI  extends JFrame implements ActionListener {
                 if(!factoryRunning && this.currentScenario != null){
                     GuiEvent ge = new GuiEvent(this, GuiAgent.START_SCENARIO);
                     myAgent.postGuiEvent(ge);
+                    factoryRunning = true;
                 }
 
             } else if (button.getText() == "STOP") {
                 GuiEvent ge = new GuiEvent(this, GuiAgent.STOP_SCENARIO);
                 myAgent.postGuiEvent(ge);
+                factoryRunning = false;
             }
         }
         else if(e.getSource() instanceof JComboBox){

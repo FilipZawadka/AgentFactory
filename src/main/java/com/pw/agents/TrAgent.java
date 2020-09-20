@@ -344,4 +344,9 @@ public class TrAgent extends Agent {
             }
         });
     }
+
+    @Override
+    public void takeDown() {
+        super.takeDown();
+    }
 }

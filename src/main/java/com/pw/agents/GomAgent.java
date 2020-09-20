@@ -93,4 +93,9 @@ public class GomAgent extends Agent {
             }
         });
     }
+
+    @Override
+    public void takeDown() {
+        super.takeDown();
+    }
 }

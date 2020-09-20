@@ -2,11 +2,14 @@ package com.pw.agents;
 
 import com.pw.Factory;
 import com.pw.GUI;
+import com.pw.behaviours.UpdateBoardBehaviour;
 import com.pw.scenarios.Scenario;
 import jade.gui.GuiEvent;
 import jade.wrapper.AgentContainer;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
+@Getter
 public class GuiAgent extends jade.gui.GuiAgent {
     private GUI gui;
     private Scenario currentScenario;
@@ -35,9 +38,10 @@ public class GuiAgent extends jade.gui.GuiAgent {
             case START_SCENARIO:
                 setScenario(this.gui.getCurrentScenario());
                 setFactory();
-                this.gui.start();
+                addBehaviour(new UpdateBoardBehaviour());
                 break;
             case STOP_SCENARIO:
+                this.currentFactory.takeDown();
                 break;
         }
     }
