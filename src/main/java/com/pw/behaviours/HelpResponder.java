@@ -52,6 +52,8 @@ public class HelpResponder extends SSContractNetResponder {
         if(((TrAgent) myAgent).getBreakContractValue() != -1 && utility <= ((TrAgent) myAgent).getBreakContractValue()){
             reply.setPerformative(ACLMessage.REFUSE);
             System.out.println("REFUSE FROM "+myAgent.getLocalName());
+            ((TrAgent) myAgent).sortDestinations();
+            ((TrAgent)myAgent).timeOfInactivity+=50;
         }
         else{
             reply.setPerformative(ACLMessage.PROPOSE);

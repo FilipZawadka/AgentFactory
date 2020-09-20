@@ -39,7 +39,7 @@ public class TrAgent extends Agent {
     private Position position;
     private Board board;
     private Boolean busy;
-    private Integer timeOfInactivity;
+    public Integer timeOfInactivity;
     private ArrayList<JobInitialPosition> destinations;
     private Integer tokens;
     private Integer breakContractValue;
@@ -285,11 +285,14 @@ public class TrAgent extends Agent {
     public void addJobPosition(JobInitialPosition destination) {
         if (!destinations.contains(destination)) {
             destinations.add(destination);
-            Collections.sort(destinations,new JobInitialCompareDate());
+            sortDestinations();
             System.out.println(getLocalName() + " ADDED TO DESTINATIONS: " + destination.getPosition().toString());
         }
     }
+    public void sortDestinations(){
+        Collections.sort(destinations,new JobInitialCompareDate());
 
+    }
     private void addGomRespondingAndHelpRequestBehaviors() {
         MessageTemplate mt = MessageTemplate.and(
             MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
@@ -328,7 +331,7 @@ public class TrAgent extends Agent {
             public void action() {
                 if (!busy) {
                     if (destinations.size() == 0) {
-                        timeOfInactivity = (int) ((System.currentTimeMillis() - lastActiveTime) * 0.001);
+                        timeOfInactivity = (int) ((System.currentTimeMillis() - lastActiveTime) * 0.01);
                     } else {
                         lock();
                         timeOfInactivity = 0;
