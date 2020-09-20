@@ -16,7 +16,6 @@ public class App {
         properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
         AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
 
-
         AgentController agentController = mainContainer.createNewAgent("GUI", GUI_CLASS_NAME, new Object[]{mainContainer});
         agentController.start();
 

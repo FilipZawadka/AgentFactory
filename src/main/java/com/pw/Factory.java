@@ -54,6 +54,7 @@ public class Factory {
     }
 
     public void start() throws StaleProxyException {
+        this.controllers = new ArrayList<>();
         for (GomDefinition gom : scenario.getGomDefinitions()) {
             Object[] gomArguments = {gom,board};
             AgentController agentControllerGom = container.createNewAgent(GOM(gom.getNumber()), GOM_CLASS_NAME, gomArguments);
@@ -68,8 +69,12 @@ public class Factory {
     }
 
     public void takeDown() throws StaleProxyException {
-        for(AgentController controller: controllers){
-            controller.kill();
-        }
+//        for(AgentController controller: this.controllers){
+//            controller.kill();
+//        }
+        for(TrAgent a : board.TrList)
+            a.doDelete();
+        for (GomAgent a : board.GomList)
+            a.doDelete();
     }
 }

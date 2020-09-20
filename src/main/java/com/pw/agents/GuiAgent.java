@@ -15,11 +15,13 @@ public class GuiAgent extends jade.gui.GuiAgent {
     private Scenario currentScenario;
     private Factory currentFactory;
     private AgentContainer container;
+    private UpdateBoardBehaviour updateBoardBehaviour;
 
     private static final String SCENARIO_PATH = "com.pw.scenarios.";
 
     public static final int START_SCENARIO = 1000;
     public static final int STOP_SCENARIO = 1001;
+    public static final int EXIT = 1002;
 
     @SneakyThrows
     @Override
@@ -27,6 +29,7 @@ public class GuiAgent extends jade.gui.GuiAgent {
         super.setup();
         Object[] args = getArguments();
         this.container = (AgentContainer) args[0];
+        this.updateBoardBehaviour = null;
 
         this.gui = new GUI(this);
     }
@@ -38,10 +41,19 @@ public class GuiAgent extends jade.gui.GuiAgent {
             case START_SCENARIO:
                 setScenario(this.gui.getCurrentScenario());
                 setFactory();
-                addBehaviour(new UpdateBoardBehaviour());
+                this.updateBoardBehaviour = new UpdateBoardBehaviour();
+                addBehaviour(this.updateBoardBehaviour);
                 break;
             case STOP_SCENARIO:
-                this.currentFactory.takeDown();
+                if(this.updateBoardBehaviour != null)
+                    removeBehaviour(this.updateBoardBehaviour);
+                this.updateBoardBehaviour = null;
+                if(this.currentFactory != null)
+                    this.currentFactory.takeDown();
+                this.currentFactory = null;
+                break;
+            case EXIT:
+                this.takeDown();
                 break;
         }
     }
@@ -59,8 +71,13 @@ public class GuiAgent extends jade.gui.GuiAgent {
         this.currentFactory.start();
     }
 
-    @Override
-    protected void takeDown() {
-        super.takeDown();
+    @SneakyThrows
+    public void takeDown() {
+        if(this.updateBoardBehaviour != null)
+            removeBehaviour(this.updateBoardBehaviour);
+        if(this.currentFactory != null)
+            this.currentFactory.takeDown();
+        getGui().dispose();
+        doDelete();
     }
 }
