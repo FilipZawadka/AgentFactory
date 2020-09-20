@@ -5,6 +5,7 @@ import com.pw.utils.Distance;
 import com.pw.utils.NeighborPosition;
 import com.pw.utils.Position;
 import jade.core.AID;
+import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,22 +27,24 @@ public class GOTr {
         board.GOTrList.add(this);
     }
 
-    public TrAgent getTrByAID(AID trAID){
-        for (TrAgent a: trlist){
-            if(a.getAID().equals(trAID)){
+    public TrAgent getTrByAID(AID trAID) {
+        for (TrAgent a : trlist) {
+            if (a.getAID().equals(trAID)) {
                 return a;
             }
         }
         return null;
     }
 
-    public void dispose(){
-        System.out.println("REACHED DESTINATION "+position);
+    public void dispose() {
+        System.out.println("REACHED DESTINATION " + position);
         board.GOTrList.remove(this);
     }
 
+    @SneakyThrows
     public void setPosition(Position _position) {
-        position = _position;
+        position = new Position(_position);
+//        Thread.sleep(Config.MOVE_DELAY);
     }
 
 
@@ -54,8 +57,8 @@ public class GOTr {
         return id;
     }
 
-    private void releaseTrs(){
-        for(TrAgent a : trlist){
+    private void releaseTrs() {
+        for (TrAgent a : trlist) {
             a.addTokens(this.tokens);
             a.release();
         }
@@ -97,19 +100,19 @@ public class GOTr {
         }
     }
 
-    public boolean isPositionFree(Position position){
-        for (GomAgent a: board.GomList){
-            if(Distance.isEqual(a.getPosition(),position)){
+    public boolean isPositionFree(Position position) {
+        for (GomAgent a : board.GomList) {
+            if (Distance.isEqual(a.getPosition(), position)) {
                 return true;
             }
         }
-        for (TrAgent a: board.TrList){
-            if(Distance.isEqual(a.getPosition(),position)){
+        for (TrAgent a : board.TrList) {
+            if (Distance.isEqual(a.getPosition(), position)) {
                 return false;
             }
         }
-        for (GOTr a: board.GOTrList){
-            if(Distance.isEqual(a.getPosition(),position)){
+        for (GOTr a : board.GOTrList) {
+            if (Distance.isEqual(a.getPosition(), position)) {
                 return false;
             }
         }
@@ -117,7 +120,7 @@ public class GOTr {
     }
 
     public void goTo(Position dest) {
-        while(!Distance.isEqual(position,dest)) {
+        while (!Distance.isEqual(position, dest)) {
             boolean blocked = true;
             while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
                 moveRight();

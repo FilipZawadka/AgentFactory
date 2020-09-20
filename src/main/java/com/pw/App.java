@@ -13,7 +13,7 @@ public class App {
 
     public static void main(String[] args) throws StaleProxyException {
         Properties properties = new Properties();
-        properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
+        properties.setProperty(Profile.GUI, Boolean.FALSE.toString());
         AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
         Scenario scenario = new LinearScenario();
         Factory factory = new Factory(scenario, mainContainer);
