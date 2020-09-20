@@ -41,7 +41,7 @@ public class GUI  implements Runnable {
             while (true){
                 int [] guiArr = new int[board.height*board.width];
                 for (GomAgent a: board.GomList){
-                    guiArr[a.getPosition().getX() + a.getPosition().getY()*board.width] = 100;
+                    guiArr[a.getPosition().getX() + a.getPosition().getY()*board.width] += 100;
                 }
                 for (TrAgent a: board.TrList){
                     guiArr[a.getPosition().getX() + a.getPosition().getY()*board.width] += 1;
