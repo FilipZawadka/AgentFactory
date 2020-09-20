@@ -49,6 +49,7 @@ public class HelpResponder extends SSContractNetResponder {
         }
 
         float taskDistance = Distance.absolute(cfpContent.getDestGom().getPosition(),cfpContent.getSrcGom().getPosition());
+        taskDistance+= Distance.absolute(new PositionInfo(((TrAgent) myAgent).getPosition()),cfpContent.getSrcGom().getPosition());
         float utility = ((TrAgent) myAgent).utilityFunction(taskDistance,false);
         reply.setOntology(onto.getName());
         reply.setLanguage(codec.getName());
