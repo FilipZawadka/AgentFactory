@@ -35,5 +35,7 @@ public class Factory {
             agentController = container.createNewAgent(TR(gom.getNumber()), TR_CLASS_NAME, trArguments);
             agentController.start();
         }
+        GUI gui = new GUI(board);
+        gui.start();
     }
 }
