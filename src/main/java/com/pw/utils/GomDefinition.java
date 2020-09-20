@@ -1,8 +1,5 @@
-package com.pw.scenerios;
+package com.pw.utils;
 
-import com.pw.utils.GomProcess;
-import com.pw.utils.Material;
-import com.pw.utils.Position;
 import lombok.Builder;
 import lombok.Data;
 

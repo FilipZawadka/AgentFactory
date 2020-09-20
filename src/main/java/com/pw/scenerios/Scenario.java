@@ -1,5 +1,6 @@
 package com.pw.scenerios;
 
+import com.pw.utils.GomDefinition;
 import lombok.Getter;
 
 import java.util.ArrayList;

@@ -2,8 +2,8 @@ package com.pw;
 
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.board.Board;
-import com.pw.scenerios.GomDefinition;
 import com.pw.scenerios.Scenario;
+import com.pw.utils.GomDefinition;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
