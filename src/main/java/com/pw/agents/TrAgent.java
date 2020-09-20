@@ -90,15 +90,18 @@ public class TrAgent extends Agent {
         this.breakContractValue = (Integer) args[3];
     }
 
-    public float utilityFunction(int offeredTokens, float deliveryLength, boolean itsMyGom) {
-        float inactivityParameter = 1;
-        float deliveryLengthParameter = 1;
+    public float utilityFunction(int offeredTokens, float taskDistance, boolean itsMyGom) {
+        float inactivityParameter = 200;
+        float taskDistanceParameter = 1;
         float loyaltyParameter = 0;
-        float offeredTokensParameter = 1;
+        float offeredTokensParameter = 2;
+        float destinationsLengthParameter = 20;
         if (itsMyGom) {
             loyaltyParameter = 20;
         }
-        return ((inactivityParameter * timeOfInactivity) + loyaltyParameter + (offeredTokens * offeredTokensParameter) - (deliveryLengthParameter * deliveryLength));
+        return ((inactivityParameter * timeOfInactivity) +
+                loyaltyParameter + (offeredTokens * offeredTokensParameter)
+                - (destinationsLengthParameter*destinations.size()) - (taskDistanceParameter * taskDistance));
 
     }
 
