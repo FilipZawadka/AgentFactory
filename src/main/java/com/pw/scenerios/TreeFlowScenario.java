@@ -5,7 +5,7 @@ import com.pw.utils.Position;
 
 public class TreeFlowScenario extends Scenario {
     protected TreeFlowScenario(Integer boardWidth, Integer boardHeight, Integer trBreakContractValue) {
-        super(16, 16, 1000000);
+        super(16, 16, -1);
 
         Material m1 = Material.builder().name("m1").weight(5).build();
         Material m2 = Material.builder().name("m2").weight(5).build();
