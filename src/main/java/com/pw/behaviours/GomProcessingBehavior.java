@@ -33,8 +33,6 @@ public class GomProcessingBehavior extends TickerBehaviour {
         GomAgent agent = (GomAgent) myAgent;
         Map<Material, Integer> availableMaterials = agent.getMaterials();
 
-        System.out.println(format("Gom #%s: %s  %s", agent.getDefinition().getNumber(), agent.getMaterials(), agent.getMaterials().get(new Material("m1", 2))));
-
         agent.getDefinition().getProcesses().forEach(process -> {
             Map<Material, Integer> requiredMaterials = process.getInputMaterials();
             if (!isThereEnoughMaterialsToStartProcess(availableMaterials, requiredMaterials)) {
