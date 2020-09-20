@@ -11,6 +11,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import lombok.SneakyThrows;
 
+import static java.lang.String.format;
+
 public class GomDeliveryListenerBehavior extends CyclicBehaviour {
 
     public GomDeliveryListenerBehavior(Agent a) {
@@ -32,6 +34,8 @@ public class GomDeliveryListenerBehavior extends CyclicBehaviour {
         if (message != null) {
             Delivery delivery = parseMessage(message);
 
+
+            System.out.println(format("%s received %s", agent.getLocalName(), delivery.getMaterial()));
             agent.incrementMaterial(new Material(delivery.getMaterial()), 1);
         } else {
             block();

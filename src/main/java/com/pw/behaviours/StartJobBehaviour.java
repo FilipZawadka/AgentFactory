@@ -18,6 +18,8 @@ import lombok.SneakyThrows;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
+
 public class StartJobBehaviour extends SimpleBehaviour {
     private Codec codec = new SLCodec();
     private Ontology onto = BiddingOntology.getInstance();
@@ -36,7 +38,6 @@ public class StartJobBehaviour extends SimpleBehaviour {
     @SneakyThrows
     public StartJobBehaviour(Agent a, String conversation_id, JobInitialPosition destination, ACLMessage cfp) {
         super(a);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@ START GOTRING");
 
         this.mt = MessageTemplate.and(
             MessageTemplate.MatchPerformative(ACLMessage.INFORM_IF),
@@ -57,6 +58,8 @@ public class StartJobBehaviour extends SimpleBehaviour {
             this.destinationGom = cfpContent.getDestGom();
             this.material = cfpContent.getMaterial();
         }
+
+        System.out.println(format("Initializing GoTR: TRs: %s, start: %s, end: %s", trAgents, start, end));
 
         this.state = State.RECEIVE_INFORM;
         this.trAgents = new ArrayList<>();
@@ -93,6 +96,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
                 GOTr gotr = new GOTr(new Position(start), ((TrAgent) myAgent).getId(), ((TrAgent) myAgent).getBoard(), trAgents, this.tokens);
                 gotr.goTo(new Position(end));
                 this.state = State.DONE;
+                this.trAgents.clear();
 
                 passMaterialsToGom();
                 break;

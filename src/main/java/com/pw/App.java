@@ -1,7 +1,7 @@
 package com.pw;
 
-import com.pw.scenerios.LinearScenario;
 import com.pw.scenerios.Scenario;
+import com.pw.scenerios.TreeFlowScenario;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
@@ -15,7 +15,7 @@ public class App {
         Properties properties = new Properties();
         properties.setProperty(Profile.GUI, Boolean.FALSE.toString());
         AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
-        Scenario scenario = new LinearScenario();
+        Scenario scenario = new TreeFlowScenario();
         Factory factory = new Factory(scenario, mainContainer);
     }
 }
