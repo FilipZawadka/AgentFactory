@@ -42,6 +42,7 @@ public class TrAgent extends Agent {
     private Boolean busy;
     private Integer timeOfInactivity;
     private ArrayList<JobInitialPosition> destinations;
+    private Integer tokens;
 
     @SneakyThrows
     public void setPosition(Position _position) {
@@ -64,6 +65,7 @@ public class TrAgent extends Agent {
         this.busy = false;
         this.destinations = new ArrayList<>();
         this.timeOfInactivity = 0;
+        this.tokens = 0;
         Object[] args = getArguments();
         this.id = args[0].toString();
         this.board = (Board) args[1];
@@ -148,14 +150,17 @@ public class TrAgent extends Agent {
     }
 
     private Integer calculateTokensForRequest(GomJobRequest gomRequest) {
-        double distance = Distance.euclidean(gomRequest.getFrom().getPosition(), gomRequest.getTo().getPosition());
-        int weight = gomRequest.getMaterialInfo().getWeight();
+        double distance = Distance.absolute(gomRequest.getFrom().getPosition(), gomRequest.getTo().getPosition());
 
-        return (int)(distance * weight);
+        return (int)(distance);
     }
 
     public void lock(){
         this.busy = true;
+    }
+
+    public void addTokens(Integer tokens){
+        this.tokens += tokens;
     }
 
     public void release(){

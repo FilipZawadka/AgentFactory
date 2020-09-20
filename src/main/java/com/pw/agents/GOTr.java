@@ -15,9 +15,11 @@ public class GOTr {
     private String id;
     public Board board;
     public Integer TRnum;
+    public Integer tokens;
 
-    public GOTr(Position position, String _id, Board board, List<TrAgent> agents) {
+    public GOTr(Position position, String _id, Board board, List<TrAgent> agents, Integer tokens) {
         this.position = position;
+        this.tokens = tokens;
         id = _id;
         this.board = board;
         trlist = new ArrayList<>(agents);
@@ -54,6 +56,7 @@ public class GOTr {
 
     private void releaseTrs(){
         for(TrAgent a : trlist){
+            a.addTokens(this.tokens);
             a.release();
         }
     }
