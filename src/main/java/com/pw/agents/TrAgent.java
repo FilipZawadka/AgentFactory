@@ -4,10 +4,7 @@ import com.pw.behaviours.HelpResponder;
 import com.pw.behaviours.SendMaterialResponder;
 import com.pw.biddingOntology.*;
 import com.pw.board.Board;
-import com.pw.utils.Config;
-import com.pw.utils.Distance;
-import com.pw.utils.NeighborPosition;
-import com.pw.utils.Position;
+import com.pw.utils.*;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
@@ -27,6 +24,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import static com.pw.Factory.CFP_ID_COUNTER;
@@ -287,6 +285,7 @@ public class TrAgent extends Agent {
     public void addJobPosition(JobInitialPosition destination) {
         if (!destinations.contains(destination)) {
             destinations.add(destination);
+            Collections.sort(destinations,new JobInitialCompareDate());
             System.out.println(getLocalName() + " ADDED TO DESTINATIONS: " + destination.getPosition().toString());
         }
     }
