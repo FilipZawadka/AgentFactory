@@ -13,6 +13,7 @@ public class BiddingOntology extends Ontology {
     public static final String CALL_FOR_PROPOSAL = "callForProposal";
     public static final String PROPOSAL_ID = "proposalId";
     public static final String NUMBER = "trNumber";
+    public static final String CALL_FOR_PROPOSAL_MATERIAL = "material";
 
     public static final String GOM = "Gom";
     public static final String GOM_ID = "gomId";
@@ -42,6 +43,10 @@ public class BiddingOntology extends Ontology {
     public static final String JOB_SENDER = "sender";
     public static final String JOB_CONVERSATION = "conversation";
 
+    public static final String DELIVERY = "Delivery";
+    public static final String DELIVERY_MATERIAL = "material";
+
+
     private static Ontology theInstance = new BiddingOntology();
 
     public static Ontology getInstance() {
@@ -59,6 +64,7 @@ public class BiddingOntology extends Ontology {
             add(new AgentActionSchema(GET_HELP), GetHelp.class);
             add(new AgentActionSchema(SEND_RESULT), SendResult.class);
             add(new AgentActionSchema(GOM_JOB_REQUEST), GomJobRequest.class);
+            add(new AgentActionSchema(DELIVERY), Delivery.class);
             add(new PredicateSchema(JOB_INITIAL_POSITION), JobInitialPosition.class);
 
             ConceptSchema cs = (ConceptSchema) getSchema(POSITION);
@@ -75,6 +81,7 @@ public class BiddingOntology extends Ontology {
             cs.add(DESTINATION, (TermSchema) getSchema(GOM));
             cs.add(SOURCE, (TermSchema) getSchema(GOM));
             cs.add(TOKENS, (PrimitiveSchema) getSchema(BasicOntology.INTEGER));
+            cs.add(CALL_FOR_PROPOSAL_MATERIAL, (ConceptSchema) getSchema(MATERIAL));
 
             cs = (ConceptSchema) getSchema(MATERIAL);
             cs.add(MATERIAL_NAME, (PrimitiveSchema) getSchema(BasicOntology.STRING));
@@ -92,12 +99,13 @@ public class BiddingOntology extends Ontology {
             as.add(GOM_JOB_REQUEST_TO, (TermSchema) getSchema(GOM));
             as.add(GOM_JOB_REQUEST_MATERIAL, (TermSchema) getSchema(MATERIAL));
 
+            as = (AgentActionSchema) getSchema(DELIVERY);
+            as.add(DELIVERY_MATERIAL, (ConceptSchema) getSchema(MATERIAL));
+
             PredicateSchema p = (PredicateSchema) getSchema(JOB_INITIAL_POSITION);
             p.add(POSITION, getSchema(POSITION));
             p.add(JOB_SENDER, getSchema(BasicOntology.AID), ObjectSchema.OPTIONAL);
             p.add(JOB_CONVERSATION, getSchema(BasicOntology.STRING), ObjectSchema.OPTIONAL);
-
-
         } catch (OntologyException oe) {
             oe.printStackTrace();
         }

@@ -8,7 +8,6 @@ import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
-import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
@@ -17,9 +16,7 @@ import jade.lang.acl.MessageTemplate;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class StartJobBehaviour extends SimpleBehaviour {
     private Codec codec = new SLCodec();
@@ -29,8 +26,10 @@ public class StartJobBehaviour extends SimpleBehaviour {
     private Integer trNumber, tokens;
     private PositionInfo start, end;
     private State state;
+    private GomInfo destinationGom;
+    private MaterialInfo material;
 
-    private enum State{
+    private enum State {
         RECEIVE_INFORM, CREATE_GOTR, DONE
     }
 
@@ -48,13 +47,15 @@ public class StartJobBehaviour extends SimpleBehaviour {
                                 MessageTemplate.MatchConversationId(conversation_id))));
 
         ContentElement ce = myAgent.getContentManager().extractContent(cfp);
-        if(ce instanceof Action && ((Action)ce).getAction() instanceof GetHelp){
-            GetHelp help = (GetHelp)((Action)ce).getAction();
+        if(ce instanceof Action && ((Action)ce).getAction() instanceof GetHelp) {
+            GetHelp help = (GetHelp) ((Action) ce).getAction();
             CallForProposal cfpContent = help.getCallForProposal();
             this.trNumber = cfpContent.getTrNumber();
             this.start = cfpContent.getSrcGom().getPosition();
             this.end = cfpContent.getDestGom().getPosition();
             this.tokens = cfpContent.getTokens();
+            this.destinationGom = cfpContent.getDestGom();
+            this.material = cfpContent.getMaterial();
         }
 
         this.state = State.RECEIVE_INFORM;
@@ -90,9 +91,11 @@ public class StartJobBehaviour extends SimpleBehaviour {
                 // TODO gotr id
                 System.out.println("################# GOTR GO GO GO");
 //                ((TrAgent)myAgent).getBoard().addGOTr(new Position(start), new Position(end), ((TrAgent)myAgent).getId(), trAgents);
-                GOTr gotr = new GOTr(new Position(start), ((TrAgent)myAgent).getId(), ((TrAgent)myAgent).getBoard(), trAgents, this.tokens);
+                GOTr gotr = new GOTr(new Position(start), ((TrAgent) myAgent).getId(), ((TrAgent) myAgent).getBoard(), trAgents, this.tokens);
                 gotr.goTo(new Position(end));
                 this.state = State.DONE;
+
+                passMaterialsToGom();
                 break;
             case DONE:
                 break;
@@ -101,8 +104,30 @@ public class StartJobBehaviour extends SimpleBehaviour {
 
     @Override
     public boolean done() {
-        if(this.state == State.DONE)
+        if (this.state == State.DONE)
             return true;
         return false;
+    }
+
+    private void passMaterialsToGom() {
+        ACLMessage message = createDeliveryMessage();
+
+        myAgent.send(message);
+    }
+
+    @SneakyThrows
+    private ACLMessage createDeliveryMessage() {
+        TrAgent agent = (TrAgent) myAgent;
+
+        ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+        message.addReceiver(this.destinationGom.getGomId());
+        message.setLanguage(agent.getCodec().getName());
+        message.setOntology(agent.getOnto().getName());
+
+        Delivery delivery = new Delivery(this.material);
+        Action action = new Action(this.destinationGom.getGomId(), delivery);
+        agent.getContentManager().fillContent(message, action);
+
+        return message;
     }
 }

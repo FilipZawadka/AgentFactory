@@ -36,7 +36,7 @@ public class CollisionsAndCrossingsScenario extends Scenario {
                 .interval(1000)
                 .build());
         GomDefinition gom3 = new GomDefinition(new Position(12, 2));
-        GomDefinition gom4 = new GomDefinition(true, new Position(12, 14));
+        GomDefinition gom4 = new GomDefinition(new Position(12, 14));
 
         // PATH 1
         gom1.addProcess(GomProcess.builder()
@@ -63,6 +63,7 @@ public class CollisionsAndCrossingsScenario extends Scenario {
                 .destination(gom3)
                 .build()))
             .build());
+        gom3.addProcess(GomProcess.finalProcess(ImmutableMap.of(m4, 1)));
 
         // PATH 2
         gom2.addProcess(GomProcess.builder()
@@ -89,6 +90,7 @@ public class CollisionsAndCrossingsScenario extends Scenario {
                 .destination(gom4)
                 .build()))
             .build());
+        gom4.addProcess(GomProcess.finalProcess(ImmutableMap.of(m8, 1)));
 
         this.gomDefinitions.addAll(newArrayList(gom1, gom2, gom3, gom4));
     }

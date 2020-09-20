@@ -11,8 +11,13 @@ import java.util.Map;
 @Setter
 @Builder
 public class GomProcess {
+    private boolean isFinal = false;
     private Map<Material, Integer> inputMaterials; // amount by Material
     private List<GomProcessOutput> outputs;
+
+    public static GomProcess finalProcess(Map<Material, Integer> inputMaterials) {
+        return new GomProcess(true, inputMaterials, null);
+    }
 
     @Getter
     @Setter

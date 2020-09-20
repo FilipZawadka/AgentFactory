@@ -155,6 +155,7 @@ public class TrAgent extends Agent {
         cfpContent.setProposalId(new Random().nextInt());
         cfpContent.setTrNumber(gomRequest.getTrNumber());
         cfpContent.setTokens(calculateTokensForRequest(gomRequest));
+        cfpContent.setMaterial(gomRequest.getMaterialInfo());
     }
 
     private Integer calculateTokensForRequest(GomJobRequest gomRequest) {
@@ -298,12 +299,12 @@ public class TrAgent extends Agent {
     }
 
     private void addHelpRespondingBehavior() {
-        addBehaviour(new CyclicBehaviour() {
+        addBehaviour(new CyclicBehaviour(this) {
             MessageTemplate mt = MessageTemplate.and(
-                    MessageTemplate.MatchPerformative(ACLMessage.CFP),
-                    MessageTemplate.and(
-                            MessageTemplate.MatchOntology(onto.getName()),
-                            MessageTemplate.MatchLanguage(codec.getName())));
+                MessageTemplate.MatchPerformative(ACLMessage.CFP),
+                MessageTemplate.and(
+                    MessageTemplate.MatchOntology(onto.getName()),
+                    MessageTemplate.MatchLanguage(codec.getName())));
 
             @Override
             public void action() {

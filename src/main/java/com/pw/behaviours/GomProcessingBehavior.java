@@ -20,6 +20,7 @@ import java.util.Vector;
 
 import static com.pw.utils.Naming.GOM;
 import static com.pw.utils.Naming.TR;
+import static java.lang.String.format;
 
 public class GomProcessingBehavior extends TickerBehaviour {
 
@@ -31,6 +32,8 @@ public class GomProcessingBehavior extends TickerBehaviour {
     protected void onTick() {
         GomAgent agent = (GomAgent) myAgent;
         Map<Material, Integer> availableMaterials = agent.getMaterials();
+
+        System.out.println(format("Gom #%s: %s  %s", agent.getDefinition().getNumber(), agent.getMaterials(), agent.getMaterials().get(new Material("m1", 2))));
 
         agent.getDefinition().getProcesses().forEach(process -> {
             Map<Material, Integer> requiredMaterials = process.getInputMaterials();
@@ -55,6 +58,11 @@ public class GomProcessingBehavior extends TickerBehaviour {
     private void startProcess(GomProcess process) {
         //TODO: May want to add some processing delay later..
         // ..
+
+        if (process.isFinal()) {
+            System.out.println(format("Materials %s reached final GoM!", process.getInputMaterials().keySet()));
+            return;
+        }
 
         process.getOutputs().forEach(output -> {
             sendJobToTR(output.getMaterial(), output.getDestination());
