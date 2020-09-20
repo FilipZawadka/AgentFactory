@@ -1,6 +1,6 @@
 package com.pw.utils;
 
-import com.pw.scenerios.GomDefinition;
+import com.pw.scenarios.GomDefinition;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

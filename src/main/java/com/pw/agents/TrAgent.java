@@ -49,7 +49,14 @@ public class TrAgent extends Agent {
     @SneakyThrows
     public void setPosition(Position _position) {
         position = _position;
-        //Thread.sleep(100);
+        Thread.sleep(100);
+        //board.updateGUI();
+    }
+
+    @SneakyThrows
+    public void setPosition(int x, int y) {
+        position = new Position(x, y);
+        Thread.sleep(100);
         //board.updateGUI();
     }
 
@@ -177,26 +184,26 @@ public class TrAgent extends Agent {
 
     public void moveUp() {
         if (position.getY() < board.height) {
-            position.setY(position.getY() + 1);
+            setPosition(position.getX(), position.getY() + 1);
         }
 
     }
 
     public void moveDown() {
         if (position.getY() > 0) {
-            position.setY(position.getY() - 1);
+            setPosition(position.getX(), position.getY() - 1);
         }
     }
 
     public void moveLeft() {
         if (position.getX() > 0) {
-            position.setX(position.getX() - 1);
+            setPosition(position.getX() - 1, position.getY());
         }
     }
 
     public void moveRight() {
         if (position.getX() < board.width) {
-            position.setX(position.getX() + 1);
+            setPosition(position.getX() + 1, position.getY());
         }
     }
     public boolean isPositionFree(Position position){
@@ -347,5 +354,10 @@ public class TrAgent extends Agent {
                 }
             }
         });
+    }
+
+    @Override
+    public void takeDown() {
+        super.takeDown();
     }
 }

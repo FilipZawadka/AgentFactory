@@ -1,22 +1,93 @@
 package com.pw;
 
 import com.pw.agents.GomAgent;
+import com.pw.agents.GuiAgent;
 import com.pw.agents.TrAgent;
 import com.pw.board.Board;
+import jade.gui.GuiEvent;
+import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class GUI implements Runnable {
+
+@Getter
+public class GUI  extends JFrame implements ActionListener {
     private JLabel[] labels;
-    private JPanel panel;
-    private JFrame frame;
     private Thread t;
     private Board board;
+    private GuiAgent myAgent;
+    private boolean factoryRunning;
+    private String currentScenario;
+    private Container container;
 
-    public GUI(Board _board) {
-        board = _board;
-        JFrame frame = new JFrame();
+    private JComponent header, grid;
+
+    public GUI(GuiAgent guiAgent) {
+        myAgent = guiAgent;
+        board = null;
+        factoryRunning = false;
+        currentScenario = null;
+        container = getContentPane();
+        container.setLayout(new BorderLayout());
+
+        header = getHeader();
+        grid = getEmptyGrid();
+
+        add(header, BorderLayout.NORTH);
+        add(grid, BorderLayout.SOUTH);
+
+        setTitle("Gui");
+        pack();
+        setVisible(true);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        System.out.println("GUI created");
+
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
+        remove(this.grid);
+        this.grid = getGrid();
+        add(this.grid, BorderLayout.SOUTH);
+        revalidate();
+        repaint();
+
+    }
+
+    private JComponent getHeader(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        JButton start = new JButton("START");
+        start.addActionListener(this);
+
+        JButton stop = new JButton("STOP");
+        stop.addActionListener(this);
+
+        String[] scenarioNames = {"LinearFlowScenario", "TreeFlowScenario"};
+        JComboBox scenarios = new JComboBox(scenarioNames);
+        this.currentScenario = scenarioNames[0];
+
+        panel.add(start);
+        panel.add(stop);
+        panel.add(scenarios);
+
+        return panel;
+    }
+
+    private JComponent getEmptyGrid(){
+        JPanel panel = new JPanel();
+        panel.setBorder(BorderFactory.createEmptyBorder(200,200,200,200));
+        panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+
+        return panel;
+    }
+
+    private JComponent getGrid(){
         JPanel panel = new JPanel();
         int b = 130;
         panel.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
@@ -28,42 +99,8 @@ public class GUI implements Runnable {
             labels[i] = new JLabel("" + i);
             panel.add(labels[i]);
         }
-        frame.add(panel, BorderLayout.CENTER);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("Gui");
-        frame.pack();
-        frame.setVisible(true);
 
-        System.out.println("GUI created");
-
-    }
-
-    public void run() {
-        System.out.println("Running " + "GUI");
-        try {
-            while (true) {
-                int[] guiArr = new int[board.height * board.width];
-                for (GomAgent a : board.GomList) {
-                    guiArr[a.getPosition().getX() + a.getPosition().getY() * board.width] += 100;
-                }
-                for (TrAgent a : board.TrList) {
-                    guiArr[a.getPosition().getX() + a.getPosition().getY() * board.width] += 1;
-                }
-                updateGUI(guiArr);
-                Thread.sleep(50);
-            }
-        } catch (InterruptedException e) {
-            System.out.println("Thread " + "GUI" + " interrupted.");
-        }
-    }
-
-    public void start() {
-        System.out.println("Starting " + "GUI");
-        if (t == null) {
-            t = new Thread(this, "GUI");
-            t.setDaemon(true);
-            t.start();
-        }
+        return panel;
     }
 
     public void updateGUI(int[] gui) {
@@ -73,4 +110,27 @@ public class GUI implements Runnable {
     }
 
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof JButton) {
+            JButton button = (JButton) e.getSource();
+
+            if (button.getText() == "START") {
+                if(!factoryRunning && this.currentScenario != null){
+                    GuiEvent ge = new GuiEvent(this, GuiAgent.START_SCENARIO);
+                    myAgent.postGuiEvent(ge);
+                    factoryRunning = true;
+                }
+
+            } else if (button.getText() == "STOP") {
+                GuiEvent ge = new GuiEvent(this, GuiAgent.STOP_SCENARIO);
+                myAgent.postGuiEvent(ge);
+                factoryRunning = false;
+            }
+        }
+        else if(e.getSource() instanceof JComboBox){
+            JComboBox combo = (JComboBox)e.getSource();
+            this.currentScenario = (String)combo.getSelectedItem();
+        }
+    }
 }

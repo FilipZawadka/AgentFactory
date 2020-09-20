@@ -3,7 +3,7 @@ package com.pw.agents;
 import com.pw.behaviours.GomProcessingBehavior;
 import com.pw.biddingOntology.BiddingOntology;
 import com.pw.board.Board;
-import com.pw.scenerios.GomDefinition;
+import com.pw.scenarios.GomDefinition;
 import com.pw.utils.Material;
 import com.pw.utils.Position;
 import jade.content.lang.Codec;
@@ -92,5 +92,10 @@ public class GomAgent extends Agent {
                 }
             }
         });
+    }
+
+    @Override
+    public void takeDown() {
+        super.takeDown();
     }
 }
