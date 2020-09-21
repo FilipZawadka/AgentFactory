@@ -12,16 +12,16 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class OutcastScenario extends Scenario {
     public OutcastScenario() {
-        super(16, 16, 1000000);
+        super(16, 16, -10);
 
-        Material m1 = Material.builder().name("m1").weight(5).build();
-        Material m2 = Material.builder().name("m2").weight(5).build();
-        Material m3 = Material.builder().name("m3").weight(5).build();
-        Material m4 = Material.builder().name("m4").weight(5).build();
-        Material m5 = Material.builder().name("m5").weight(5).build();
-        Material m6 = Material.builder().name("m6").weight(5).build();
-        Material m7 = Material.builder().name("m7").weight(5).build();
-        Material m8 = Material.builder().name("m8").weight(5).build();
+        Material m1 = Material.builder().name("m1").weight(3).build();
+        Material m2 = Material.builder().name("m2").weight(3).build();
+        Material m3 = Material.builder().name("m3").weight(3).build();
+        Material m4 = Material.builder().name("m4").weight(3).build();
+        Material m5 = Material.builder().name("m5").weight(3).build();
+        Material m6 = Material.builder().name("m6").weight(3).build();
+        Material m7 = Material.builder().name("m7").weight(3).build();
+        Material m8 = Material.builder().name("m8").weight(3).build();
 
         GomDefinition gom1 = new GomDefinition(new Position(0, 2),
             MaterialGenerator.builder()

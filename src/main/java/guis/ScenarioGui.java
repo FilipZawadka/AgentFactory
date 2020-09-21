@@ -1,26 +1,14 @@
-package com.pw;
+package guis;
 
-import com.pw.agents.GomAgent;
-import com.pw.agents.TrAgent;
-import com.pw.board.Board;
-import com.pw.scenerios.*;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.core.Runtime;
-import jade.gui.GuiEvent;
-import jade.util.leap.Properties;
+import com.pw.AppThread;
 import jade.wrapper.AgentContainer;
-import lombok.Getter;
 import lombok.SneakyThrows;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.EventListener;
 
 public class ScenarioGui extends JFrame implements ActionListener {
     private JLabel[] labels;
@@ -30,7 +18,9 @@ public class ScenarioGui extends JFrame implements ActionListener {
     private JComponent header;
     private ArrayList<Thread> threads;
     private AgentContainer mainContainer;
-    private appThread app;
+    private AppThread app;
+    private ImageIcon legend;
+    private JLabel imageLabel;
 
 
     public ScenarioGui() {
@@ -38,11 +28,16 @@ public class ScenarioGui extends JFrame implements ActionListener {
 
         add(header, BorderLayout.NORTH);
         setTitle("Scenario select");
-        pack();
+        //pack();
         setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        legend = new ImageIcon("src/main/resources/legends/"+ this.currentScenario +".JPG");
+        imageLabel =  new JLabel(legend);
+        JPanel panel = new JPanel();
+        panel.add(imageLabel);
+        add(panel,BorderLayout.CENTER);
         System.out.println("GUI created");
+        setSize(700,700);
 
     }
 
@@ -54,12 +49,13 @@ public class ScenarioGui extends JFrame implements ActionListener {
         JButton start = new JButton("START");
         start.addActionListener(this);
 
-        JButton stop = new JButton("STOP");
+        JButton stop = new JButton("EXIT");
         stop.addActionListener(this);
 
         String[] scenarioNames = {"LinearScenario", "TreeFlowScenario","OutcastScenario","CollisionsAndCrossingsScenario"};
         JComboBox scenarios = new JComboBox(scenarioNames);
         this.currentScenario = scenarioNames[0];
+        scenarios.addActionListener(this);
 
         panel.add(start);
         panel.add(stop);
@@ -77,20 +73,20 @@ public class ScenarioGui extends JFrame implements ActionListener {
             JButton button = (JButton) e.getSource();
 
             if (button.getText() == "START") {
-                if(!factoryRunning && this.currentScenario != null){
+                if(this.currentScenario != null){
                     System.out.println("start");
-                    app = new appThread(currentScenario);
+                    app = new AppThread(this.currentScenario);
                 }
 
-            } else if (button.getText() == "STOP") {
-                app.kill();
-                app.join();
+            } else if (button.getText() == "EXIT") {
+                System.exit(0);
                 System.out.println("stop");
             }
         }
         else if(e.getSource() instanceof JComboBox){
             JComboBox combo = (JComboBox)e.getSource();
             this.currentScenario = (String)combo.getSelectedItem();
+            imageLabel.setIcon(new ImageIcon("src/main/resources/legends/"+ this.currentScenario +".JPG"));
         }
     }
 }

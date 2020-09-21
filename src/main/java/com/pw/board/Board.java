@@ -1,6 +1,5 @@
 package com.pw.board;
 
-import com.pw.GUI;
 import com.pw.agents.GOTr;
 import com.pw.agents.GomAgent;
 import com.pw.agents.TrAgent;

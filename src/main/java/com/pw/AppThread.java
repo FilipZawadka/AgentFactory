@@ -11,7 +11,7 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
 import lombok.SneakyThrows;
 
-public class appThread extends Thread {
+public class AppThread extends Thread {
     Thread t;
     String currentScenario;
     AgentContainer mainContainer;
@@ -23,7 +23,7 @@ public class appThread extends Thread {
         Properties properties = new Properties();
         properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
         mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
-        Scenario scenario = new LinearScenario();
+        Scenario scenario =null;// = new LinearScenario();
         switch (currentScenario){
             case "LinearScenario":
                 scenario = new LinearScenario();
@@ -44,7 +44,7 @@ public class appThread extends Thread {
         factory = new Factory(scenario, mainContainer);
     }
 
-    public appThread(String _currentScenario) {
+    public AppThread(String _currentScenario) {
         currentScenario = _currentScenario;
         System.out.println("Starting " + _currentScenario);
         if (t == null) {

@@ -1,4 +1,4 @@
-package com.pw;
+package guis;
 
 import com.pw.agents.GomAgent;
 import com.pw.agents.TrAgent;
@@ -7,7 +7,7 @@ import com.pw.board.Board;
 import javax.swing.*;
 import java.awt.*;
 
-public class GUI implements Runnable {
+public class BoardGui implements Runnable {
     private JLabel[] labels;
     private JPanel panel;
     private JFrame frame;
@@ -18,7 +18,8 @@ public class GUI implements Runnable {
     private ImageIcon trIcon;
     private ImageIcon gomIcon;
     private ImageIcon gomwithtrsIcon;
-    public GUI(Board _board) {
+
+    public BoardGui(Board _board) {
         board = _board;
         JFrame frame = new JFrame();
         JPanel panel = new JPanel();
@@ -26,7 +27,7 @@ public class GUI implements Runnable {
         panel.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
         panel.setLayout(new GridLayout(board.height, board.width, 10, 10));
         panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        emptyIcon = new ImageIcon("src/main/resources/icons/square.png");
+        emptyIcon = new ImageIcon("src/main/resources/icons/block.png");
         gotrIcon = new ImageIcon("src/main/resources/icons/gotr.png");
         gomIcon = new ImageIcon("src/main/resources/icons/gom.png");
         trIcon = new ImageIcon("src/main/resources/icons/tr.png");
