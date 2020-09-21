@@ -9,6 +9,7 @@ import java.awt.*;
 
 public class BoardGui implements Runnable {
     private JLabel[] labels;
+    private JLabel[] tokenLabels;
     private JPanel panel;
     private JFrame frame;
     private Thread t;
@@ -22,11 +23,14 @@ public class BoardGui implements Runnable {
     public BoardGui(Board _board) {
         board = _board;
         JFrame frame = new JFrame();
-        JPanel panel = new JPanel();
-        int b = 130;
-        panel.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
-        panel.setLayout(new GridLayout(board.height, board.width, 10, 10));
-        panel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        JPanel boardPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout(10,10));
+        mainPanel.add(getHeader(),BorderLayout.NORTH);
+        int b = 50;
+        boardPanel.setBorder(BorderFactory.createEmptyBorder(b, b, b, b));
+        boardPanel.setLayout(new GridLayout(board.height, board.width, 10, 10));
+        boardPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         emptyIcon = new ImageIcon("src/main/resources/icons/block.png");
         gotrIcon = new ImageIcon("src/main/resources/icons/gotr.png");
         gomIcon = new ImageIcon("src/main/resources/icons/gom.png");
@@ -37,16 +41,31 @@ public class BoardGui implements Runnable {
         for (int i = 0; i < board.height * board.width; i++) {
             //labels[i] = new JLabel("" + i);
             labels[i] = new JLabel(emptyIcon);
-            panel.add(labels[i]);
+            boardPanel.add(labels[i]);
         }
-        frame.add(panel, BorderLayout.CENTER);
+        mainPanel.add(boardPanel,BorderLayout.CENTER);
+        frame.add(mainPanel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Gui");
+
         frame.pack();
+
         frame.setVisible(true);
 
         System.out.println("GUI created");
 
+    }
+    private JComponent getHeader(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+
+        tokenLabels = new JLabel[board.TrList.size()];
+        for (int i = 0; i < board.TrList.size(); i++) {
+            tokenLabels[i] = new JLabel(" TR "+(i+1)+ " tokens: 0 ");
+            panel.add(tokenLabels[i]);
+        }
+
+        return panel;
     }
 
     public void run() {
@@ -98,8 +117,10 @@ public class BoardGui implements Runnable {
             else {
                 labels[i].setIcon(gomwithtrsIcon);
             }
-
-
+        }
+        for (int i = 0; i < board.TrList.size(); i++) {
+            tokenLabels[i] = new JLabel(" TR "+(i+1)+ " tokens: "+board.TrList.get(i).getTokens()+" ");
+            panel.add(tokenLabels[i]);
         }
     }
 
