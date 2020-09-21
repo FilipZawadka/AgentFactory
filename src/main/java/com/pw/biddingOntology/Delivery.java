@@ -11,5 +11,5 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Delivery implements AgentAction {
-    private MaterialInfo material;
+	private MaterialInfo material;
 }

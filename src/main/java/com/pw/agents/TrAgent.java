@@ -1,10 +1,26 @@
 package com.pw.agents;
 
+import static com.pw.Factory.CFP_ID_COUNTER;
+import static com.pw.utils.Naming.GOM;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
 import com.pw.behaviours.HelpResponder;
 import com.pw.behaviours.SendMaterialResponder;
-import com.pw.biddingOntology.*;
+import com.pw.biddingOntology.BiddingOntology;
+import com.pw.biddingOntology.CallForProposal;
+import com.pw.biddingOntology.GetHelp;
+import com.pw.biddingOntology.GomJobRequest;
+import com.pw.biddingOntology.JobInitialPosition;
 import com.pw.board.Board;
-import com.pw.utils.*;
+import com.pw.utils.Config;
+import com.pw.utils.Distance;
+import com.pw.utils.JobInitialCompareDate;
+import com.pw.utils.NeighborPosition;
+import com.pw.utils.Position;
+
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.Ontology;
@@ -24,342 +40,340 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-
-import static com.pw.Factory.CFP_ID_COUNTER;
-import static com.pw.utils.Naming.GOM;
 @Setter
 @Getter
 public class TrAgent extends Agent {
-    public Codec codec = new SLCodec();
-    public Ontology onto = BiddingOntology.getInstance();
+	public Codec codec = new SLCodec();
+	public Ontology onto = BiddingOntology.getInstance();
+	public Integer timeOfInactivity;
+	private String id;
+	private Position position;
+	private Board board;
+	private Boolean busy;
+	private ArrayList<JobInitialPosition> destinations;
+	private Integer tokens;
+	private Integer breakContractValue;
+	private long lastActiveTime;
 
-    private String id;
-    private Position position;
-    private Board board;
-    private Boolean busy;
-    public Integer timeOfInactivity;
-    private ArrayList<JobInitialPosition> destinations;
-    private Integer tokens;
-    private Integer breakContractValue;
-    private long lastActiveTime;
+	public Position getPosition() {
+		return new Position(this.position);
+	}
 
-    @SneakyThrows
-    public void setPosition(Position _position) {
-        position = _position;
-        Thread.sleep(Config.MOVE_DELAY);
-    }
+	@SneakyThrows
+	public void setPosition(Position _position) {
+		position = _position;
+		Thread.sleep(Config.MOVE_DELAY);
+	}
 
-    public Position getPosition() {
-        return new Position(this.position);
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getId() {
-        return id;
-    }
+	protected void setup() {
+		super.setup();
 
-    protected void setup() {
-        super.setup();
+		this.busy = false;
+		this.destinations = new ArrayList<>();
+		this.timeOfInactivity = 0;
+		lastActiveTime = System.currentTimeMillis();
+		this.tokens = 0;
+		unpackArguments();
 
-        this.busy = false;
-        this.destinations = new ArrayList<>();
-        this.timeOfInactivity = 0;
-        lastActiveTime = System.currentTimeMillis();
-        this.tokens = 0;
-        unpackArguments();
+		this.board.TrList.add(this);
+		addToDf();
 
-        this.board.TrList.add(this);
-        addToDf();
+		getContentManager().registerLanguage(codec, FIPANames.ContentLanguage.FIPA_SL);
+		getContentManager().registerOntology(onto);
 
-        getContentManager().registerLanguage(codec, FIPANames.ContentLanguage.FIPA_SL);
-        getContentManager().registerOntology(onto);
+		addHelpRespondingBehavior();
+		addGomRespondingAndHelpRequestBehaviors();
+		addDestinationsCheckingBehavior();
+	}
 
-        addHelpRespondingBehavior();
-        addGomRespondingAndHelpRequestBehaviors();
-        addDestinationsCheckingBehavior();
-    }
+	private void unpackArguments() {
+		Object[] args = getArguments();
+		this.id = args[0].toString();
+		this.board = (Board) args[1];
+		this.position = (Position) args[2];
+		this.breakContractValue = (Integer) args[3];
+	}
 
-    private void unpackArguments() {
-        Object[] args = getArguments();
-        this.id = args[0].toString();
-        this.board = (Board) args[1];
-        this.position = (Position) args[2];
-        this.breakContractValue = (Integer) args[3];
-    }
+	public float utilityFunction(int offeredTokens, float taskDistance, boolean itsMyGom) {
+		float inactivityParameter = 200;
+		float taskDistanceParameter = 1;
+		float loyaltyParameter = 0;
+		float offeredTokensParameter = 2;
+		float destinationsLengthParameter = 20;
+		if (itsMyGom) {
+			loyaltyParameter = 20;
+		}
+		return ((inactivityParameter * timeOfInactivity) +
+				loyaltyParameter + (offeredTokens * offeredTokensParameter)
+				- (destinationsLengthParameter * destinations.size()) - (taskDistanceParameter * taskDistance));
 
-    public float utilityFunction(int offeredTokens, float taskDistance, boolean itsMyGom) {
-        float inactivityParameter = 200;
-        float taskDistanceParameter = 1;
-        float loyaltyParameter = 0;
-        float offeredTokensParameter = 2;
-        float destinationsLengthParameter = 20;
-        if (itsMyGom) {
-            loyaltyParameter = 20;
-        }
-        return ((inactivityParameter * timeOfInactivity) +
-                loyaltyParameter + (offeredTokens * offeredTokensParameter)
-                - (destinationsLengthParameter*destinations.size()) - (taskDistanceParameter * taskDistance));
+	}
 
+	public void prepareHelpCfp(GomJobRequest gomRequest, ACLMessage cfp, Agent bidder) {
+		ArrayList<AID> responders = new ArrayList<>();
 
-    }
+		CallForProposal cfpContent = new CallForProposal();
+		fillCfpFromGomRequest(cfpContent, gomRequest);
 
-    public void prepareHelpCfp(GomJobRequest gomRequest, ACLMessage cfp, Agent bidder) {
-        ArrayList<AID> responders = new ArrayList<>();
+		// get other TRs
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		sd.setName("factory1");
+		template.addServices(sd);
+		try {
+			// add them as the receivers of the cfp
+			DFAgentDescription[] result = DFService.search(bidder, template);
+			responders = new ArrayList<>();
+			for (int i = 0; i < result.length; ++i) {
+				responders.add(result[i].getName());
+			}
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+		if (responders.size() > 0) {
+			// initialize cfp
+			for (int i = 0; i < responders.size(); ++i) {
+				if (!responders.get(i).equals(getAID()))
+					cfp.addReceiver(responders.get(i));
+			}
 
-        CallForProposal cfpContent = new CallForProposal();
-        fillCfpFromGomRequest(cfpContent, gomRequest);
+			cfp.setOntology(onto.getName());
+			cfp.setLanguage(codec.getName());
+			cfp.setConversationId("cfp" + CFP_ID_COUNTER.getAndIncrement());
 
-        // get other TRs
-        DFAgentDescription template = new DFAgentDescription();
-        ServiceDescription sd = new ServiceDescription();
-        sd.setName("factory1");
-        template.addServices(sd);
-        try {
-            // add them as the receivers of the cfp
-            DFAgentDescription[] result = DFService.search(bidder, template);
-            responders = new ArrayList<>();
-            for (int i = 0; i < result.length; ++i) {
-                responders.add(result[i].getName());
-            }
-        } catch (FIPAException fe) {
-            fe.printStackTrace();
-        }
-        if (responders.size() > 0) {
-            // initialize cfp
-            for (int i = 0; i < responders.size(); ++i) {
-                if (!responders.get(i).equals(getAID()))
-                    cfp.addReceiver(responders.get(i));
-            }
+			GetHelp gh = new GetHelp();
+			gh.setCallForProposal(cfpContent);
 
-            cfp.setOntology(onto.getName());
-            cfp.setLanguage(codec.getName());
-            cfp.setConversationId("cfp" + CFP_ID_COUNTER.getAndIncrement());
+			Action a = new Action(getAID(), gh);
+			try {
+				getContentManager().fillContent(cfp, a);
+			} catch (Codec.CodecException ce) {
+				ce.printStackTrace();
+			} catch (OntologyException oe) {
+				oe.printStackTrace();
+			}
+			System.out.println("CFP FROM " + getLocalName());
+		}
+	}
 
-            GetHelp gh = new GetHelp();
-            gh.setCallForProposal(cfpContent);
+	private void fillCfpFromGomRequest(CallForProposal cfpContent, GomJobRequest gomRequest) {
+		cfpContent.setSrcGom(gomRequest.getFrom());
+		cfpContent.setDestGom(gomRequest.getTo());
+		cfpContent.setProposalId(new Random().nextInt());
+		cfpContent.setTrNumber(gomRequest.getTrNumber());
+		cfpContent.setTokens(calculateTokensForRequest(gomRequest));
+		cfpContent.setMaterial(gomRequest.getMaterialInfo());
+	}
 
-            Action a = new Action(getAID(), gh);
-            try {
-                getContentManager().fillContent(cfp, a);
-            } catch (Codec.CodecException ce) {
-                ce.printStackTrace();
-            } catch (OntologyException oe) {
-                oe.printStackTrace();
-            }
-            System.out.println("CFP FROM " + getLocalName());
-        }
-    }
+	private Integer calculateTokensForRequest(GomJobRequest gomRequest) {
+		double distance = Distance.absolute(gomRequest.getFrom().getPosition(), gomRequest.getTo().getPosition());
 
-    private void fillCfpFromGomRequest(CallForProposal cfpContent, GomJobRequest gomRequest) {
-        cfpContent.setSrcGom(gomRequest.getFrom());
-        cfpContent.setDestGom(gomRequest.getTo());
-        cfpContent.setProposalId(new Random().nextInt());
-        cfpContent.setTrNumber(gomRequest.getTrNumber());
-        cfpContent.setTokens(calculateTokensForRequest(gomRequest));
-        cfpContent.setMaterial(gomRequest.getMaterialInfo());
-    }
+		return (int) (distance);
+	}
 
-    private Integer calculateTokensForRequest(GomJobRequest gomRequest) {
-        double distance = Distance.absolute(gomRequest.getFrom().getPosition(), gomRequest.getTo().getPosition());
+	public void lock() {
+		this.busy = true;
+	}
 
-        return (int) (distance);
-    }
+	public void addTokens(Integer tokens) {
+		this.tokens += tokens;
+	}
 
-    public void lock() {
-        this.busy = true;
-    }
+	public void release() {
+		this.busy = false;
+	}
 
-    public void addTokens(Integer tokens) {
-        this.tokens += tokens;
-    }
+	@SneakyThrows
+	public void moveUp() {
+		if (position.getY() < board.height) {
+			setPosition(new Position(this.position.getX(), this.position.getY() + 1));
+		}
 
-    public void release() {
-        this.busy = false;
-    }
+	}
 
-    @SneakyThrows
-    public void moveUp() {
-        if (position.getY() < board.height) {
-            setPosition(new Position(this.position.getX(), this.position.getY() + 1));
-        }
+	public void moveDown() {
+		if (position.getY() > 0) {
+			setPosition(new Position(this.position.getX(), this.position.getY() - 1));
+		}
+	}
 
-    }
+	public void moveLeft() {
+		if (position.getX() > 0) {
+			setPosition(new Position(this.position.getX() - 1, this.position.getY()));
+		}
+	}
 
-    public void moveDown() {
-        if (position.getY() > 0) {
-            setPosition(new Position(this.position.getX(), this.position.getY() - 1));
-        }
-    }
+	public void moveRight() {
+		if (position.getX() < board.width) {
+			setPosition(new Position(this.position.getX() + 1, this.position.getY()));
+		}
+	}
 
-    public void moveLeft() {
-        if (position.getX() > 0) {
-            setPosition(new Position(this.position.getX() - 1, this.position.getY()));
-        }
-    }
+	public boolean isPositionFree(Position position) {
+		for (GomAgent a : board.GomList) {
+			if (Distance.isEqual(a.getPosition(), position)) {
+				return true;
+			}
+		}
+		for (TrAgent a : board.TrList) {
+			if (Distance.isEqual(a.getPosition(), position)) {
+				return false;
+			}
+		}
+		for (GOTr a : board.GOTrList) {
+			if (Distance.isEqual(a.getPosition(), position)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public void moveRight() {
-        if (position.getX() < board.width) {
-            setPosition(new Position(this.position.getX() + 1, this.position.getY()));
-        }
-    }
+	public void goTo(Position dest) {
+		while (!Distance.isEqual(position, dest)) {
+			boolean blocked = true;
+			while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
+				moveRight();
+				blocked = false;
+			}
+			while (position.getX() > dest.getX() && isPositionFree(NeighborPosition.getLeftPosition(position))) {
+				moveLeft();
+				blocked = false;
+			}
+			while (position.getY() < dest.getY() && isPositionFree(NeighborPosition.getUpPosition(position))) {
+				moveUp();
+				blocked = false;
+			}
+			while (position.getY() > dest.getY() && isPositionFree(NeighborPosition.getDownPosition(position))) {
+				moveDown();
+				blocked = false;
+			}
+			if (blocked) {
+				switch ((int) (Math.random() * 4)) {
+				case 0:
+					if (isPositionFree(NeighborPosition.getRightPosition(position))) {
+						moveRight();
+						break;
+					}
+				case 1:
+					if (isPositionFree(NeighborPosition.getLeftPosition(position))) {
+						moveLeft();
+						break;
+					}
+				case 2:
+					if (isPositionFree(NeighborPosition.getUpPosition(position))) {
+						moveUp();
+						break;
+					}
+				default:
+					if (isPositionFree(NeighborPosition.getDownPosition(position))) {
+						moveDown();
+						break;
+					}
+				}
+			}
+		}
+	}
 
-    public boolean isPositionFree(Position position) {
-        for (GomAgent a : board.GomList) {
-            if (Distance.isEqual(a.getPosition(), position)) {
-                return true;
-            }
-        }
-        for (TrAgent a : board.TrList) {
-            if (Distance.isEqual(a.getPosition(), position)) {
-                return false;
-            }
-        }
-        for (GOTr a : board.GOTrList) {
-            if (Distance.isEqual(a.getPosition(), position)) {
-                return false;
-            }
-        }
-        return true;
-    }
+	private void addToDf() {
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("tr");
+		sd.setName("factory1");
+		dfd.addServices(sd);
+		try {
+			DFService.register(this, dfd);
+		} catch (FIPAException fe) {
+			fe.printStackTrace();
+		}
+	}
 
-    public void goTo(Position dest) {
-        while (!Distance.isEqual(position, dest)) {
-            boolean blocked = true;
-            while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
-                moveRight();
-                blocked = false;
-            }
-            while (position.getX() > dest.getX() && isPositionFree(NeighborPosition.getLeftPosition(position))) {
-                moveLeft();
-                blocked = false;
-            }
-            while (position.getY() < dest.getY() && isPositionFree(NeighborPosition.getUpPosition(position))) {
-                moveUp();
-                blocked = false;
-            }
-            while (position.getY() > dest.getY() && isPositionFree(NeighborPosition.getDownPosition(position))) {
-                moveDown();
-                blocked = false;
-            }
-            if (blocked) {
-                switch ((int) (Math.random() * 4)) {
-                    case 0:
-                        if (isPositionFree(NeighborPosition.getRightPosition(position))) {
-                            moveRight();
-                            break;
-                        }
-                    case 1:
-                        if (isPositionFree(NeighborPosition.getLeftPosition(position))) {
-                            moveLeft();
-                            break;
-                        }
-                    case 2:
-                        if (isPositionFree(NeighborPosition.getUpPosition(position))) {
-                            moveUp();
-                            break;
-                        }
-                    default:
-                        if (isPositionFree(NeighborPosition.getDownPosition(position))) {
-                            moveDown();
-                            break;
-                        }
-                }
-            }
-        }
-    }
+	public void addJobPosition(JobInitialPosition destination) {
+		if (!destinations.contains(destination)) {
+			destinations.add(destination);
+			sortDestinations();
+			System.out.println(getLocalName() + " ADDED TO DESTINATIONS: " + destination.getPosition().toString());
+		}
+	}
 
-    private void addToDf() {
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("tr");
-        sd.setName("factory1");
-        dfd.addServices(sd);
-        try {
-            DFService.register(this, dfd);
-        } catch (FIPAException fe) {
-            fe.printStackTrace();
-        }
-    }
+	public void sortDestinations() {
+		Collections.sort(destinations, new JobInitialCompareDate());
 
-    public void addJobPosition(JobInitialPosition destination) {
-        if (!destinations.contains(destination)) {
-            destinations.add(destination);
-            sortDestinations();
-            System.out.println(getLocalName() + " ADDED TO DESTINATIONS: " + destination.getPosition().toString());
-        }
-    }
-    public void sortDestinations(){
-        Collections.sort(destinations,new JobInitialCompareDate());
+	}
 
-    }
-    private void addGomRespondingAndHelpRequestBehaviors() {
-        MessageTemplate mt = MessageTemplate.and(
-            MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
-            MessageTemplate.and(
-                MessageTemplate.MatchOntology(onto.getName()),
-                MessageTemplate.and(
-                    MessageTemplate.MatchSender(new AID(GOM(Integer.parseInt(this.id)), AID.ISLOCALNAME)),
-                    MessageTemplate.MatchLanguage(codec.getName()))));
+	private void addGomRespondingAndHelpRequestBehaviors() {
+		MessageTemplate mt = MessageTemplate.and(
+				MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
+				MessageTemplate.and(
+						MessageTemplate.MatchOntology(onto.getName()),
+						MessageTemplate.and(
+								MessageTemplate.MatchSender(new AID(GOM(Integer.parseInt(this.id)), AID.ISLOCALNAME)),
+								MessageTemplate.MatchLanguage(codec.getName()))));
 
-        addBehaviour(new SendMaterialResponder(this, mt));
-    }
+		addBehaviour(new SendMaterialResponder(this, mt));
+	}
 
-    private void addHelpRespondingBehavior() {
-        addBehaviour(new CyclicBehaviour(this) {
-            MessageTemplate mt = MessageTemplate.and(
-                MessageTemplate.MatchPerformative(ACLMessage.CFP),
-                MessageTemplate.and(
-                    MessageTemplate.MatchOntology(onto.getName()),
-                    MessageTemplate.MatchLanguage(codec.getName())));
+	private void addHelpRespondingBehavior() {
+		addBehaviour(new CyclicBehaviour(this) {
+			final MessageTemplate mt = MessageTemplate.and(
+					MessageTemplate.MatchPerformative(ACLMessage.CFP),
+					MessageTemplate.and(
+							MessageTemplate.MatchOntology(onto.getName()),
+							MessageTemplate.MatchLanguage(codec.getName())));
 
-            @Override
-            public void action() {
-                ACLMessage cfp = myAgent.receive(mt);
-                if (cfp != null) {
-                    myAgent.addBehaviour(new HelpResponder(myAgent, cfp));
-                } else {
-                    block();
-                }
-            }
-        });
-    }
+			@Override
+			public void action() {
+				ACLMessage cfp = myAgent.receive(mt);
+				if (cfp != null) {
+					myAgent.addBehaviour(new HelpResponder(myAgent, cfp));
+				} else {
+					block();
+				}
+			}
+		});
+	}
 
-    private void addDestinationsCheckingBehavior() {
-        addBehaviour(new CyclicBehaviour(this) {
-            @SneakyThrows
-            @Override
-            public void action() {
-                if (!busy) {
-                    if (destinations.size() == 0) {
-                        timeOfInactivity = (int) ((System.currentTimeMillis() - lastActiveTime) * 0.01);
-                    } else {
-                        lock();
-                        timeOfInactivity = 0;
-                        lastActiveTime = System.currentTimeMillis();
-                        Thread.sleep(1000);
-                        sortDestinations();
-                        JobInitialPosition destination = destinations.get(0);
-                        Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
-                        System.out.println(getLocalName() + " GO TO DESTINATION " + " " + destinationPosition.toString());
-                        goTo(destinationPosition);
+	private void addDestinationsCheckingBehavior() {
+		addBehaviour(new CyclicBehaviour(this) {
+			@SneakyThrows
+			@Override
+			public void action() {
+				if (!busy) {
+					if (destinations.size() == 0) {
+						timeOfInactivity = (int) ((System.currentTimeMillis() - lastActiveTime) * 0.01);
+					} else {
+						lock();
+						timeOfInactivity = 0;
+						lastActiveTime = System.currentTimeMillis();
+						Thread.sleep(1000);
+						sortDestinations();
+						JobInitialPosition destination = destinations.get(0);
+						Position destinationPosition = new Position(destination.getPosition().getX(),
+								destination.getPosition().getY());
+						System.out
+								.println(getLocalName() + " GO TO DESTINATION " + " " + destinationPosition.toString());
+						goTo(destinationPosition);
 
-                        // info on reached job starting position
-                        ACLMessage result = new ACLMessage(ACLMessage.INFORM_IF);
-                        result.addReceiver(destination.getSender());
-                        result.setConversationId(destination.getConversation());
-                        result.setOntology(onto.getName());
-                        result.setLanguage(codec.getName());
-                        send(result);
-                        System.out.println("INFORM at " + ((TrAgent) myAgent).getPosition().toString() + " : " + super.myAgent.getName() + result);
+						// info on reached job starting position
+						ACLMessage result = new ACLMessage(ACLMessage.INFORM_IF);
+						result.addReceiver(destination.getSender());
+						result.setConversationId(destination.getConversation());
+						result.setOntology(onto.getName());
+						result.setLanguage(codec.getName());
+						send(result);
+						System.out.println(
+								"INFORM at " + ((TrAgent) myAgent).getPosition().toString() + " : " + super.myAgent
+										.getName() + result);
 
-                        destinations.remove(0);
+						destinations.remove(0);
 
-                    }
-                }
-            }
-        });
-    }
+					}
+				}
+			}
+		});
+	}
 }

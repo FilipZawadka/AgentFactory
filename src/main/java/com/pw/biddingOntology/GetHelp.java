@@ -1,7 +1,11 @@
 package com.pw.biddingOntology;
 
 import jade.content.AgentAction;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -9,5 +13,5 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class GetHelp implements AgentAction {
-    private CallForProposal callForProposal;
+	private CallForProposal callForProposal;
 }

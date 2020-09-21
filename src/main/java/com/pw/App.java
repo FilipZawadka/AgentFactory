@@ -10,10 +10,10 @@ import jade.wrapper.StaleProxyException;
 
 public class App {
 
-    public static void main(String[] args) throws StaleProxyException {
-        Properties properties = new Properties();
-        properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
-        AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
-        ScenarioGui scenarioGui = new ScenarioGui(mainContainer);
-    }
+	public static void main(String[] args) throws StaleProxyException {
+		Properties properties = new Properties();
+		properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
+		AgentContainer mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
+		ScenarioGui scenarioGui = new ScenarioGui(mainContainer);
+	}
 }

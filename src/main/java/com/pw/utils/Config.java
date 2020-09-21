@@ -1,5 +1,5 @@
 package com.pw.utils;
 
 public class Config {
-    public static final int MOVE_DELAY = 100;
+	public static final int MOVE_DELAY = 100;
 }
