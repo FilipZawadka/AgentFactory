@@ -120,6 +120,7 @@ public class GOTr {
     }
 
     public void goTo(Position dest) {
+        Position initialPosition = new Position(position);
         while (!Distance.isEqual(position, dest)) {
             boolean blocked = true;
             while (position.getX() < dest.getX() && isPositionFree(NeighborPosition.getRightPosition(position))) {
@@ -171,8 +172,14 @@ public class GOTr {
                 }
             }
         }
+        giveTokens(Distance.absolute(initialPosition,dest));
         releaseTrs();
         dispose();
+    }
+    private void giveTokens(int tokens){
+        for (TrAgent a : trlist) {
+            a.setTokens(a.getTokens()+tokens);
+        }
     }
 }
 

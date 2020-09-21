@@ -21,6 +21,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.Random;
 
 import static com.pw.Factory.CFP_ID_COUNTER;
 import static com.pw.utils.Naming.GOM;
-
+@Setter
 @Getter
 public class TrAgent extends Agent {
     public Codec codec = new SLCodec();

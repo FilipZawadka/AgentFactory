@@ -119,8 +119,7 @@ public class BoardGui implements Runnable {
             }
         }
         for (int i = 0; i < board.TrList.size(); i++) {
-            tokenLabels[i] = new JLabel(" TR "+(i+1)+ " tokens: "+board.TrList.get(i).getTokens()+" ");
-            panel.add(tokenLabels[i]);
+            tokenLabels[i].setText(" TR "+(i+1)+ " tokens: "+board.TrList.get(i).getTokens()+" ");
         }
     }
 
