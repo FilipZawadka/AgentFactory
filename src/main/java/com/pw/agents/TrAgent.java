@@ -102,6 +102,7 @@ public class TrAgent extends Agent {
                 loyaltyParameter + (offeredTokens * offeredTokensParameter)
                 - (destinationsLengthParameter*destinations.size()) - (taskDistanceParameter * taskDistance));
 
+
     }
 
     public void prepareHelpCfp(GomJobRequest gomRequest, ACLMessage cfp, Agent bidder) {
@@ -286,7 +287,6 @@ public class TrAgent extends Agent {
     public void addJobPosition(JobInitialPosition destination) {
         if (!destinations.contains(destination)) {
             destinations.add(destination);
-            sortDestinations();
             System.out.println(getLocalName() + " ADDED TO DESTINATIONS: " + destination.getPosition().toString());
         }
     }
@@ -337,6 +337,7 @@ public class TrAgent extends Agent {
                         lock();
                         timeOfInactivity = 0;
                         lastActiveTime = System.currentTimeMillis();
+                        sortDestinations();
                         JobInitialPosition destination = destinations.get(0);
                         Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
                         System.out.println(getLocalName() + " GO TO DESTINATION " + " " + destinationPosition.toString());

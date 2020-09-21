@@ -21,6 +21,7 @@ public class ScenarioGui extends JFrame implements ActionListener {
     private AppThread app;
     private ImageIcon legend;
     private JLabel imageLabel;
+    private JButton start, stop, exit;
 
 
     public ScenarioGui(AgentContainer _mainContainer) {
@@ -47,13 +48,13 @@ public class ScenarioGui extends JFrame implements ActionListener {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
-        JButton start = new JButton("START");
+        start = new JButton("START");
         start.addActionListener(this);
 
-        JButton stop = new JButton("STOP");
+        stop = new JButton("STOP");
         stop.addActionListener(this);
 
-        JButton exit = new JButton("EXIT");
+        exit = new JButton("EXIT");
         exit.addActionListener(this);
 
         String[] scenarioNames = {"LinearScenario", "TreeFlowScenario","OutcastScenario","CollisionsAndCrossingsScenario"};
@@ -81,6 +82,8 @@ public class ScenarioGui extends JFrame implements ActionListener {
                 if(this.currentScenario != null){
                     System.out.println("start");
                     app = new AppThread(mainContainer, this.currentScenario);
+                    start.setEnabled(false);
+                    stop.setEnabled(true);
                 }
 
             } else if (button.getText() == "EXIT") {
@@ -89,6 +92,8 @@ public class ScenarioGui extends JFrame implements ActionListener {
             }
             else if(button.getText() == "STOP"){
                 app.stopApp();
+                start.setEnabled(true);
+                stop.setEnabled(false);
             }
         }
         else if(e.getSource() instanceof JComboBox){

@@ -46,7 +46,10 @@ public class AppThread extends Thread {
         }
         factory = new Factory(scenario, mainContainer);
 
-        while(!factory.getBoard().filled(scenario.getGomDefinitions().size())){}
+        Thread.sleep(1000);
+        while(!factory.getBoard().filled(scenario.getGomDefinitions().size())){
+            System.out.println("NOT ENOUGH");
+        }
         gui = new BoardGui(factory.getBoard());
         gui.start();
     }
