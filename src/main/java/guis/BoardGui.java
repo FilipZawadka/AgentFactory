@@ -10,6 +10,7 @@ import java.awt.*;
 public class BoardGui implements Runnable {
     private JLabel[] labels;
     private JLabel[] tokenLabels;
+    private JLabel[] materialLabels;
     private JPanel panel;
     private JFrame frame;
     private Thread t;
@@ -58,16 +59,27 @@ public class BoardGui implements Runnable {
 
     }
     private JComponent getHeader(){
-        JPanel panel = new JPanel();
-        panel.setLayout(new FlowLayout());
+        JPanel mainPanel= new JPanel();
+        JPanel tokenPanel = new JPanel();
+        JPanel materialPanel = new JPanel();
+        tokenPanel.setLayout(new FlowLayout());
 
         tokenLabels = new JLabel[board.TrList.size()];
         for (int i = 0; i < board.TrList.size(); i++) {
             tokenLabels[i] = new JLabel(" TR "+(i+1)+ " tokens: 0 ");
-            panel.add(tokenLabels[i]);
+            tokenPanel.add(tokenLabels[i]);
         }
+        materialLabels = new JLabel[board.GomList.size()];
+        for (int i = 0; i < board.TrList.size(); i++) {
+            materialLabels[i] = new JLabel(" GOM "+(i+1)+ " materials: 0 ");
+            materialPanel.add(materialLabels[i]);
+        }
+        mainPanel.setLayout(new BorderLayout(10,10));
+        mainPanel.add(tokenPanel,BorderLayout.NORTH);
+        mainPanel.add(materialPanel,BorderLayout.SOUTH);
 
-        return panel;
+
+        return mainPanel;
     }
 
     public void run() {
@@ -124,6 +136,9 @@ public class BoardGui implements Runnable {
         }
         for (int i = 0; i < board.TrList.size(); i++) {
             tokenLabels[i].setText(" TR "+(i+1)+ " tokens: "+board.TrList.get(i).getTokens()+" ");
+        }
+        for (int i = 0; i < board.TrList.size(); i++) {
+            materialLabels[i].setText(" GOM "+(i+1)+ " materials: "+board.GomList.get(i).getMaterials().size()+" ");
         }
     }
 
