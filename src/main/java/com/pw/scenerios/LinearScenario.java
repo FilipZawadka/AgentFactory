@@ -23,7 +23,7 @@ public class LinearScenario extends Scenario {
             MaterialGenerator.builder()
                 .material(m1)
                 .amount(1)
-                .interval(5000)
+                .interval(7000)
                 .build());
         GomDefinition gom2 = new GomDefinition(new Position(6, 14));
         GomDefinition gom3 = new GomDefinition(new Position(12, 2));

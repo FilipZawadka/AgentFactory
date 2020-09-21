@@ -75,8 +75,8 @@ public class GomAgent extends Agent {
             addBehaviour(new TickerBehaviour(this, generator.getInterval()) {
                 @Override
                 protected void onTick() {
-                    GomAgent agent = (GomAgent) myAgent;
-                    agent.incrementMaterial(generator.getMaterial(), generator.getAmount());
+                    //GomAgent agent = (GomAgent) myAgent;
+                    ((GomAgent)myAgent).incrementMaterial(generator.getMaterial(), generator.getAmount());
                 }
             });
         });

@@ -287,6 +287,7 @@ public class TrAgent extends Agent {
     public void addJobPosition(JobInitialPosition destination) {
         if (!destinations.contains(destination)) {
             destinations.add(destination);
+            sortDestinations();
             System.out.println(getLocalName() + " ADDED TO DESTINATIONS: " + destination.getPosition().toString());
         }
     }
@@ -328,6 +329,7 @@ public class TrAgent extends Agent {
 
     private void addDestinationsCheckingBehavior() {
         addBehaviour(new CyclicBehaviour(this) {
+            @SneakyThrows
             @Override
             public void action() {
                 if (!busy) {
@@ -337,6 +339,7 @@ public class TrAgent extends Agent {
                         lock();
                         timeOfInactivity = 0;
                         lastActiveTime = System.currentTimeMillis();
+                        Thread.sleep(1000);
                         sortDestinations();
                         JobInitialPosition destination = destinations.get(0);
                         Position destinationPosition = new Position(destination.getPosition().getX(), destination.getPosition().getY());
@@ -353,6 +356,7 @@ public class TrAgent extends Agent {
                         System.out.println("INFORM at " + ((TrAgent) myAgent).getPosition().toString() + " : " + super.myAgent.getName() + result);
 
                         destinations.remove(0);
+
                     }
                 }
             }

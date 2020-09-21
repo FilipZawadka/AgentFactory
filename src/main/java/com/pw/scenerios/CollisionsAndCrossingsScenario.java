@@ -27,13 +27,13 @@ public class CollisionsAndCrossingsScenario extends Scenario {
             MaterialGenerator.builder()
                 .material(m1)
                 .amount(1)
-                .interval(5000)
+                .interval(20000)
                 .build());
         GomDefinition gom2 = new GomDefinition(new Position(6, 14),
             MaterialGenerator.builder()
                 .material(m5)
                 .amount(1)
-                .interval(1000)
+                .interval(10000)
                 .build());
         GomDefinition gom3 = new GomDefinition(new Position(12, 2));
         GomDefinition gom4 = new GomDefinition(new Position(12, 14));

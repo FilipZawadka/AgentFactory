@@ -27,7 +27,7 @@ public class OutcastScenario extends Scenario {
             MaterialGenerator.builder()
                 .material(m1)
                 .amount(1)
-                .interval(5000)
+                .interval(7100)
                 .build());
         GomDefinition gom2 = new GomDefinition(new Position(4, 2));
         GomDefinition gom3 = new GomDefinition(new Position(8, 2));

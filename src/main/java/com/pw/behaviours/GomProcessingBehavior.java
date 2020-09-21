@@ -30,10 +30,9 @@ public class GomProcessingBehavior extends TickerBehaviour {
 
     @Override
     protected void onTick() {
-        GomAgent agent = (GomAgent) myAgent;
-        Map<Material, Integer> availableMaterials = agent.getMaterials();
+        Map<Material, Integer> availableMaterials = ((GomAgent) myAgent).getMaterials();
 
-        agent.getDefinition().getProcesses().forEach(process -> {
+        ((GomAgent) myAgent).getDefinition().getProcesses().forEach(process -> {
             Map<Material, Integer> requiredMaterials = process.getInputMaterials();
             if (!isThereEnoughMaterialsToStartProcess(availableMaterials, requiredMaterials)) {
                 return;

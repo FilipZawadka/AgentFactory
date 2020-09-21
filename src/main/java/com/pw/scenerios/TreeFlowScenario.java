@@ -25,24 +25,24 @@ public class TreeFlowScenario extends Scenario {
             MaterialGenerator.builder()
                 .material(m1)
                 .amount(1)
-                .interval(400)
+                .interval(10000)
                 .build());
         GomDefinition gom2 = new GomDefinition(new Position(2, 7),
             MaterialGenerator.builder()
                 .material(m2)
                 .amount(1)
-                .interval(400)
+                .interval(13000)
                 .build(),
             MaterialGenerator.builder()
                 .material(m3)
                 .amount(1)
-                .interval(400)
+                .interval(16000)
                 .build());
         GomDefinition gom3 = new GomDefinition(new Position(2, 1),
             MaterialGenerator.builder()
                 .material(m4)
                 .amount(1)
-                .interval(400)
+                .interval(19000)
                 .build());
 
         GomDefinition gom4 = new GomDefinition(new Position(7, 11));
