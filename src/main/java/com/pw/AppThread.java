@@ -1,6 +1,7 @@
 package com.pw;
 
 import com.pw.scenerios.*;
+import guis.BoardGui;
 import jade.content.lang.Codec;
 import jade.content.onto.Ontology;
 import jade.core.Profile;
@@ -16,13 +17,15 @@ public class AppThread extends Thread {
     String currentScenario;
     AgentContainer mainContainer;
     Factory factory;
+    Boolean stop;
+    public BoardGui gui;
 
 
     @SneakyThrows
     public void run() {
-        Properties properties = new Properties();
-        properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
-        mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
+//        Properties properties = new Properties();
+//        properties.setProperty(Profile.GUI, Boolean.TRUE.toString());
+//        mainContainer = Runtime.instance().createMainContainer(new ProfileImpl(properties));
         Scenario scenario =null;// = new LinearScenario();
         switch (currentScenario){
             case "LinearScenario":
@@ -42,9 +45,14 @@ public class AppThread extends Thread {
 
         }
         factory = new Factory(scenario, mainContainer);
+
+        while(!factory.getBoard().filled(scenario.getGomDefinitions().size())){}
+        gui = new BoardGui(factory.getBoard());
+        gui.start();
     }
 
-    public AppThread(String _currentScenario) {
+    public AppThread(AgentContainer container, String _currentScenario) {
+        mainContainer = container;
         currentScenario = _currentScenario;
         System.out.println("Starting " + _currentScenario);
         if (t == null) {
@@ -54,7 +62,9 @@ public class AppThread extends Thread {
     }
     public void kill() throws StaleProxyException, InterruptedException {
         System.exit(0);
-
-
+    }
+    public void stopApp() throws StaleProxyException, InterruptedException {
+        factory.delete();
+        gui.stop();
     }
 }

@@ -19,10 +19,12 @@ public class BoardGui implements Runnable {
     private ImageIcon trIcon;
     private ImageIcon gomIcon;
     private ImageIcon gomwithtrsIcon;
+    private Boolean stop;
 
     public BoardGui(Board _board) {
         board = _board;
-        JFrame frame = new JFrame();
+        stop = false;
+        frame = new JFrame();
         JPanel boardPanel = new JPanel();
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout(10,10));
@@ -71,7 +73,7 @@ public class BoardGui implements Runnable {
     public void run() {
         System.out.println("Running " + "GUI");
         try {
-            while (true) {
+            while (!stop) {
                 int[] guiArr = new int[board.height * board.width];
                 for (GomAgent a : board.GomList) {
                     guiArr[a.getPosition().getX() + a.getPosition().getY() * board.width] += 100;
@@ -96,7 +98,9 @@ public class BoardGui implements Runnable {
         }
     }
     public void stop() throws InterruptedException {
-        t.join();
+        stop = true;
+        frame.dispose();
+//        t.interrupt();
     }
 
     public void updateGUI(int[] gui) {

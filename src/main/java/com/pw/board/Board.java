@@ -41,4 +41,10 @@ public class Board extends Agent {
         return null;
     }
 
+    public boolean filled(int gomNumber){
+        if(GomList.size() < gomNumber || TrList.size() < gomNumber)
+            return false;
+        return true;
+    }
+
 }
