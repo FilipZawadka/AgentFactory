@@ -95,7 +95,7 @@ public class HelpInitiator extends ContractNetInitiator {
                         JobInitialPosition d = new JobInitialPosition();
                         d.setPosition(srcPosition);
                         myAgent.getContentManager().fillContent(m, d);
-                        System.out.println("ACCEPT REPLY " + m.getInReplyTo());
+                        System.out.println("ACCEPT REPLY " + m);
                     } catch (Codec.CodecException e) {
                         e.printStackTrace();
                     } catch (OntologyException e) {

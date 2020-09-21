@@ -59,7 +59,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
             this.material = cfpContent.getMaterial();
         }
 
-        System.out.println(format("Initializing GoTR: TRs: %s, start: %s, end: %s", trAgents, start, end));
+
 
         this.state = State.RECEIVE_INFORM;
         this.trAgents = new ArrayList<>();
@@ -91,6 +91,7 @@ public class StartJobBehaviour extends SimpleBehaviour {
                 break;
             case CREATE_GOTR:
                 // TODO gotr id
+                System.out.println(format("Initializing GoTR: TRs: %s, start: %s, end: %s", trAgents, start, end));
                 System.out.println("################# GOTR GO GO GO");
 //                ((TrAgent)myAgent).getBoard().addGOTr(new Position(start), new Position(end), ((TrAgent)myAgent).getId(), trAgents);
                 GOTr gotr = new GOTr(new Position(start), ((TrAgent) myAgent).getId(), ((TrAgent) myAgent).getBoard(), trAgents, this.tokens);
